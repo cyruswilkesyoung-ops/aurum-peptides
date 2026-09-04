@@ -1,0 +1,79 @@
+functionsDirectory = "C:\\Users\\legii\\OneDrive\\Desktop\\CYrusThenX\\purelabs\\netlify\\functions"
+functionsDirectoryOrigin = "config-v1"
+headersOrigin = "config"
+plugins = []
+redirects = []
+
+[build]
+publish = "C:\\Users\\legii\\OneDrive\\Desktop\\CYrusThenX\\purelabs\\dist"
+publishOrigin = "config"
+commandOrigin = "config"
+command = "npm run build"
+functions = "C:\\Users\\legii\\OneDrive\\Desktop\\CYrusThenX\\purelabs\\netlify\\functions"
+
+  [build.environment]
+
+  [build.processing]
+
+    [build.processing.css]
+
+    [build.processing.html]
+
+    [build.processing.images]
+
+    [build.processing.js]
+
+  [build.services]
+
+[functions]
+
+  [functions."*"]
+  node_bundler = "esbuild"
+
+[[headers]]
+for = "/*"
+
+  [headers.values]
+  X-Frame-Options = "SAMEORIGIN"
+  X-Content-Type-Options = "nosniff"
+  Referrer-Policy = "strict-origin-when-cross-origin"
+  Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+[[headers]]
+for = "/checkout/*"
+
+  [headers.values]
+  X-Robots-Tag = "noindex, nofollow"
+  Cache-Control = "no-store"
+
+[[headers]]
+for = "/order/*"
+
+  [headers.values]
+  X-Robots-Tag = "noindex, nofollow"
+  Cache-Control = "no-store"
+
+[[headers]]
+for = "/admin/*"
+
+  [headers.values]
+  X-Robots-Tag = "noindex, nofollow"
+  Cache-Control = "no-store"
+
+[[headers]]
+for = "/assets/*"
+
+  [headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/css/*"
+
+  [headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/js/*"
+
+  [headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"

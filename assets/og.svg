@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs><linearGradient id="ogg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e7cd8a"/><stop offset="0.5" stop-color="#c9a84c"/><stop offset="1" stop-color="#8a6f2e"/>
+    </linearGradient>
+    <radialGradient id="oghalo" cx="0.78" cy="0.4" r="0.6">
+      <stop offset="0" stop-color="#c9a84c" stop-opacity="0.18"/><stop offset="1" stop-color="#c9a84c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+  <rect width="1200" height="630" fill="url(#oghalo)"/>
+  <rect x="26" y="26" width="1148" height="578" fill="none" stroke="#c9a84c" stroke-opacity="0.28" stroke-width="1.5"/>
+  <g stroke="#c9a84c" stroke-width="1.2" opacity="0.14" fill="none">
+    <path d="M120 120 200 90 280 120 280 200 200 230 120 200Z"/>
+    <path d="M280 120 360 90 440 120 440 200 360 230 280 200"/>
+  </g>
+  <text x="80" y="152" font-family="'IBM Plex Mono',monospace" font-size="20" letter-spacing="9" fill="#c9a84c">US-BASED RESEARCH PEPTIDES</text>
+  <text x="76" y="292" font-family="Georgia,serif" font-size="94" fill="#ece7da">The gold standard,</text>
+  <text x="76" y="402" font-family="Georgia,serif" font-size="94" font-style="italic" fill="url(#ogg)">documented.</text>
+  <text x="80" y="502" font-family="'IBM Plex Mono',monospace" font-size="22" fill="#a39d8e">≥99% purity  ·  COA every batch  ·  For research use only</text>
+  <!-- clear vial with gold cap and white label -->
+  <g transform="translate(972 190)">
+    <rect x="12" y="-10" width="126" height="42" rx="6" fill="url(#ogg)"/>
+    <ellipse cx="75" cy="-2" rx="40" ry="12" fill="url(#ogg)"/>
+    <ellipse cx="75" cy="-5" rx="28" ry="6" fill="#fff6dc" opacity="0.3"/>
+    <rect x="0" y="24" width="150" height="266" rx="16" fill="#ffffff" fill-opacity="0.09" stroke="#ffffff" stroke-opacity="0.45"/>
+    <path d="M0 250 Q38 240 75 246 Q112 252 150 245 L150 290 Q150 290 134 290 L16 290 Q0 290 0 274 Z" fill="#f2eee2" opacity="0.9"/>
+    <rect x="9" y="40" width="6" height="150" rx="3" fill="#ffffff" opacity="0.5"/>
+    <rect x="10" y="120" width="130" height="120" rx="6" fill="#ffffff"/>
+    <rect x="14" y="124" width="122" height="112" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.1"/>
+    <text x="75" y="148" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="5" fill="#1a1a1a">AURUM</text>
+    <line x1="34" y1="156" x2="116" y2="156" stroke="#c9a84c" stroke-width="0.9"/>
+    <text x="75" y="184" text-anchor="middle" font-family="Georgia,serif" font-size="24" font-weight="bold" fill="#111111">BPC-157</text>
+    <text x="75" y="203" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="8.5" fill="#4a4741">CAS 137525-51-0</text>
+    <text x="75" y="226" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="6.5" letter-spacing="1" fill="#3c3a35">FOR RESEARCH USE ONLY</text>
+  </g>
+  <g transform="translate(80 560)">
+    <path d="M20 -34 40 -22.5v23L20 12 0 .5v-23Z" stroke="url(#ogg)" stroke-width="2.2" fill="none" transform="translate(0 -1)"/>
+    <path fill="url(#ogg)" d="M20.8 -27h3.4l8.6 30h-5Z M20.8 -27h2l-10.4 36c-.5 1.8-1.7 3-3.6 3.6 1.2-1.2 1.8-2.4 2.2-4Z"/>
+    <text x="58" y="-6" font-family="Georgia,serif" font-size="30" letter-spacing="10" fill="#ece7da">AURUM</text>
+    <text x="58" y="14" font-family="'Helvetica Neue',Arial,sans-serif" font-size="11" letter-spacing="8" fill="#c9a84c">PEPTIDES · RESEARCH | PRECISION | PERFORMANCE</text>
+  </g>
+</svg>

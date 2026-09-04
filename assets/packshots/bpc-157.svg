@@ -1,0 +1,96 @@
+<svg width="340" height="460" viewBox="0 0 340 460" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BPC-157 research vial packshot — clear glass vial with visible lyophilized powder, gold cap and white Aurum label">
+  <defs>
+    <clipPath id="glassbpc157"><rect x="108" y="92" width="124" height="312" rx="14"/></clipPath>
+    <!-- clear glass: cylindrical shading built from translucent whites -->
+    <linearGradient id="bodybpc157" x1="108" y1="0" x2="232" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.30"/>
+      <stop offset="0.09" stop-color="#FFFFFF" stop-opacity="0.13"/>
+      <stop offset="0.34" stop-color="#FFFFFF" stop-opacity="0.05"/>
+      <stop offset="0.62" stop-color="#FFFFFF" stop-opacity="0.07"/>
+      <stop offset="0.88" stop-color="#FFFFFF" stop-opacity="0.17"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.34"/>
+    </linearGradient>
+    <linearGradient id="capbpc157" x1="108" y1="0" x2="232" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5C4A1E"/><stop offset="0.16" stop-color="#E7CD8A"/>
+      <stop offset="0.5" stop-color="#C9A84C"/><stop offset="0.82" stop-color="#E7CD8A"/>
+      <stop offset="1" stop-color="#5C4A1E"/>
+    </linearGradient>
+    <!-- white label with a whisper of cylindrical shading -->
+    <linearGradient id="labelbpc157" x1="108" y1="0" x2="232" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E8E6E1"/><stop offset="0.12" stop-color="#FFFFFF"/>
+      <stop offset="0.5" stop-color="#FFFFFF"/><stop offset="0.88" stop-color="#FAF9F6"/>
+      <stop offset="1" stop-color="#E4E1DB"/>
+    </linearGradient>
+    <linearGradient id="framebpc157" x1="108" y1="0" x2="232" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E7CD8A"/>
+      <stop offset="0.48" stop-color="#C9A84C"/>
+      <stop offset="1" stop-color="#8A6F2E"/>
+    </linearGradient>
+    <!-- clear solution: reads as water, not tint -->
+    <linearGradient id="liqbpc157" x1="0" y1="238" x2="0" y2="404" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.30"/>
+      <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.58"/>
+    </linearGradient>
+    <linearGradient id="cakebpc157" x1="0" y1="295" x2="0" y2="404" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DED8C8"/>
+    </linearGradient>
+    <radialGradient id="grdbpc157" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#000" stop-opacity="0.5"/><stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softbpc157" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+  </defs>
+
+  <!-- ground shadow + gold under-glow -->
+  <ellipse cx="170" cy="424" rx="92" ry="16" fill="url(#grdbpc157)" filter="url(#softbpc157)"/>
+  <ellipse cx="170" cy="420" rx="60" ry="8" fill="#C9A84C" opacity="0.1" filter="url(#softbpc157)"/>
+  <!-- backlight so the clear glass reads as transparent on dark cards -->
+  <ellipse cx="170" cy="250" rx="86" ry="150" fill="#FFFFFF" opacity="0.05" filter="url(#softbpc157)"/>
+
+  <!-- clear glass body -->
+  <rect x="108" y="92" width="124" height="312" rx="14" fill="url(#bodybpc157)"/>
+  <g clip-path="url(#glassbpc157)">
+         <path d="M108 305 Q140 293 170 300 Q200 307 232 302 L232 404 L108 404 Z" fill="url(#cakebpc157)"/>
+         <path d="M108 305 Q140 293 170 300 Q200 307 232 302" fill="none" stroke="#FFFFFF" stroke-width="1.8" opacity="0.75"/>
+         <ellipse cx="148" cy="332" rx="24" ry="9" fill="#FFFFFF" opacity="0.3"/>
+       </g>
+  <!-- glass edges + specular highlights -->
+  <rect x="108" y="92" width="124" height="312" rx="14" fill="none" stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="1.1"/>
+  <rect x="116" y="106" width="6" height="152" rx="3" fill="#FFFFFF" opacity="0.5"/>
+  <rect x="219" y="118" width="4" height="142" rx="2" fill="#FFFFFF" opacity="0.28"/>
+  <!-- base meniscus -->
+  <ellipse cx="170" cy="396" rx="56" ry="6" fill="#FFFFFF" opacity="0.14"/>
+
+  <!-- grey rubber stopper, seen through the clear neck -->
+  <rect x="114" y="78" width="112" height="22" rx="4" fill="#6E6B64"/>
+  <rect x="114" y="78" width="112" height="7" rx="3" fill="#8A867D"/>
+
+  <!-- gold crimp cap -->
+  <rect x="110" y="52" width="120" height="34" rx="5" fill="url(#capbpc157)"/>
+  <g stroke="#5C4A1E" stroke-width="0.8" opacity="0.55">
+    <path d="M120 56v26M138 56v26M156 56v26M174 56v26M192 56v26M210 56v26"/>
+  </g>
+  <rect x="110" y="52" width="120" height="8" rx="4" fill="#FFF6DC" opacity="0.45"/>
+  <!-- flip-off button, gold on gold -->
+  <ellipse cx="170" cy="60" rx="34" ry="11" fill="url(#capbpc157)"/>
+  <ellipse cx="170" cy="60" rx="34" ry="11" fill="none" stroke="#5C4A1E" stroke-opacity="0.5" stroke-width="1"/>
+  <ellipse cx="170" cy="57.5" rx="24" ry="5.5" fill="#FFF6DC" opacity="0.3"/>
+
+  <!-- white label with thin gold border -->
+  <rect x="104" y="196" width="132" height="150" rx="7" fill="url(#labelbpc157)"/>
+  <rect x="104" y="196" width="132" height="150" rx="7" fill="none" stroke="#000000" stroke-opacity="0.14" stroke-width="0.6"/>
+  <rect x="109" y="201" width="122" height="140" rx="4.5" fill="none" stroke="url(#framebpc157)" stroke-width="1"/>
+  <!-- label content : dark charcoal on white -->
+  <text x="170" y="220" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="9.5" letter-spacing="4.2" fill="#1A1A1A">AURUM</text>
+  <line x1="130" y1="227.5" x2="210" y2="227.5" stroke="#C9A84C" stroke-width="0.8"/>
+  <text x="170" y="259" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="21" font-weight="bold" fill="#111111">BPC-157</text>
+  <text x="170" y="278" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="7.6" letter-spacing="1" fill="#4A4741">CAS 137525-51-0</text>
+  <g>
+    <rect x="140" y="288" width="60" height="19" rx="9.5" fill="none" stroke="#C9A84C" stroke-opacity="0.8" stroke-width="0.9"/>
+    <text x="170" y="301.5" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="10" letter-spacing="0.5" fill="#1A1A1A">10 mg</text>
+  </g>
+  <text x="170" y="326" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="6" letter-spacing="1.1" fill="#3C3A35">FOR RESEARCH USE ONLY</text>
+  <text x="170" y="336" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="6" letter-spacing="1.1" fill="#3C3A35">NOT FOR HUMAN CONSUMPTION</text>
+</svg>

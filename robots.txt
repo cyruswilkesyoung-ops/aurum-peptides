@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /checkout/
+Disallow: /order/
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://aurum-peptides.netlify.app/sitemap.xml
