@@ -1,0 +1,14 @@
+{
+  "name": "aurum-peptides",
+  "private": true,
+  "type": "module",
+  "description": "Aurum Peptides storefront \u2014 static site plus Netlify Functions for the order flow.",
+  "scripts": {
+    "build": "node scripts/build-catalog.mjs",
+    "dev": "netlify dev",
+    "test": "node tests/pricing.test.mjs && node tests/handlers.test.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
