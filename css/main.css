@@ -470,11 +470,17 @@ em, .italic { font-style: italic; }
 }
 .hero--banner .hero__media,
 .hero--banner .hero__scrim { position: absolute; inset: 0; }
+/* The banner is a background layer, not an <img>, on purpose. A missing <img>
+   paints a broken-image box at its declared width, and this one declares 6336px,
+   so the whole homepage reads as broken to anyone who has not added the file yet.
+   A background-image that 404s simply does not paint: the gradient below shows
+   through and the hero still looks deliberate. Drop hero.webp into assets/hero/
+   and it appears on the next deploy with no other change. */
 .hero--banner .hero__media {
-  display: block;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: 72% 50%;
+  background-image: url("/assets/hero/hero.webp");
+  background-size: cover;
+  background-position: 72% 50%;
+  background-repeat: no-repeat;
 }
 .hero--banner .hero__scrim {
   background:
@@ -492,7 +498,7 @@ em, .italic { font-style: italic; }
      near-solid and the photograph becomes atmosphere behind the type rather
      than a subject beside it. */
   .hero--banner { min-height: auto; }
-  .hero--banner .hero__media img { object-position: 78% 50%; }
+  .hero--banner .hero__media { background-position: 78% 50%; }
   .hero--banner .hero__scrim {
     background:
       linear-gradient(90deg, var(--paper) 0%, rgba(10,10,10,0.93) 46%, rgba(10,10,10,0.72) 100%),
