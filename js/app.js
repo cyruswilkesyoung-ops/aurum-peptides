@@ -1,6 +1,7 @@
 /* Aurum Peptides — interaction layer. Vanilla, dependency-free, deferred.
    Everything degrades gracefully without JS: content and links work, the cart
-   is an enhancement, reveals default to visible. */
+   is an enhancement, and reveals fall back to visible in CSS (see `.reveal` in
+   main.css) rather than here — this file may never run. */
 (() => {
   'use strict';
   const $ = (s, r = document) => r.querySelector(s);
@@ -23,6 +24,10 @@
   addEventListener('scroll', onScroll, { passive: true });
 
   /* ---- scroll reveals -------------------------------------------------- */
+  // Disarms the CSS failsafe in main.css. Must happen before any early return below,
+  // and before the observer is wired: its only job is to say "app.js is running", so
+  // that a page whose script never arrives still reveals itself after 3s.
+  document.documentElement.classList.add('reveals-ready');
   const reveals = $$('.reveal');
   if (reveals.length && 'IntersectionObserver' in window) {
     const io = new IntersectionObserver(

@@ -22,7 +22,13 @@
   --ink: #ece7da;
   --ink-2: #cfc9ba;
   --ink-soft: #a39d8e;
-  --ink-faint: #7f7a6c;
+  /* #7f7a6c measured 4.62:1 on the flat page black — a pass — but this token is used for
+     small labels (card category, "From", bundle savings) that sit on the LIGHTER surfaces:
+     4.22:1 on a card, 4.15:1 on --paper-3, and 4.44:1 where the body's radial gradient
+     lifts the ground. All three are under the 4.5 AA floor for text this size, and the
+     flat-black reading is the one place it happens to pass. #8b8577 clears every surface
+     (4.84:1 worst case) and is still plainly the quietest step in the ink ramp. */
+  --ink-faint: #8b8577;
   --line: rgba(201, 168, 76, 0.16);
   --line-2: rgba(236, 231, 218, 0.07);
 
@@ -213,6 +219,16 @@ em, .italic { font-style: italic; }
   gap: 1.4rem;
   padding: 0.55rem 1rem;
   text-align: center;
+  /* 🚨 THE WHOLE SITE SCROLLED SIDEWAYS BETWEEN ~721px AND ~1100px. Every item is
+     white-space:nowrap in a flex row that never wrapped, and the rule below only drops
+     the surplus items BELOW 720px — so in the band between, all four were forced onto
+     one line and pushed the document past the viewport: 909px at 768, 975 at 900,
+     1037 at 1024. That is a horizontal scrollbar on most tablets and small laptops, on
+     every page, since the bar is sitewide. Pre-dates this branch.
+     Wrapping is the fix rather than a wider breakpoint or overflow:hidden — it cannot
+     overflow at ANY width, and it drops no information on the way. */
+  flex-wrap: wrap;
+  row-gap: 0.35rem;
 }
 .announce__dot {
   width: 4px; height: 4px; border-radius: 50%;
@@ -341,7 +357,10 @@ em, .italic { font-style: italic; }
 .icon-btn {
   display: inline-grid;
   place-items: center;
-  width: 40px; height: 40px;
+  /* 44px, not 40. These are the cart and the drawer close — primary controls on a phone,
+     and the two most expensive taps on the site to miss. WCAG 2.5.8 (AA) only asks 24px,
+     but 44 is the practical touch standard and costs 4px of chrome here. */
+  width: 44px; height: 44px;
   border-radius: 50%;
   color: var(--ink-2);
   transition: background 0.25s, color 0.25s;
@@ -417,6 +436,84 @@ em, .italic { font-style: italic; }
   padding-top: clamp(2.5rem, 6vw, 5rem);
   padding-bottom: clamp(3rem, 7vw, 6rem);
   overflow: clip;
+}
+/* ---- hero: full-bleed banner ------------------------------------------
+   The photograph runs edge to edge across the top of the page and the copy sits
+   on it, so three things have to hold that a two-column hero never has to:
+
+   1. The section paints --paper itself. If the photograph 404s or is still in
+      flight, the headline is still white on near-black instead of landing on
+      whatever ground the browser happens to have.
+   2. The scrim carries the contrast, not the image. A photograph's left edge is
+      not a contract — one re-export or a different crop and the type is sitting
+      on a highlight. The gradient is opaque where the words are and clears
+      before the product.
+   3. object-position is held right of centre. A 21:9 frame cropped to a phone
+      loses most of its width; anchoring right keeps the vials in shot rather
+      than centring on the empty space the composition reserved for type.
+   ---------------------------------------------------------------------- */
+.hero--banner {
+  padding: 0;
+  min-height: clamp(28rem, 62vh, 44rem);
+  display: flex;
+  align-items: center;
+}
+/* Two class selectors, deliberately. The dark-theme block further down restates a plain
+   `.hero { background: ... }` at equal specificity, so a single-class rule here loses on
+   source order and the banner's fallback ground silently never applies — which only shows
+   up on the one occasion it matters, when the photograph has not loaded. */
+.hero.hero--banner {
+  background:
+    radial-gradient(90% 70% at 78% 30%, rgba(201, 168, 76, 0.10), transparent 55%),
+    radial-gradient(60% 50% at 15% 85%, rgba(201, 168, 76, 0.05), transparent 60%),
+    var(--paper);
+}
+.hero--banner .hero__media,
+.hero--banner .hero__scrim { position: absolute; inset: 0; }
+.hero--banner .hero__media {
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 72% 50%;
+}
+.hero--banner .hero__scrim {
+  background:
+    linear-gradient(90deg, var(--paper) 0%, rgba(10,10,10,0.94) 24%, rgba(10,10,10,0.62) 50%,
+                    rgba(10,10,10,0.18) 76%, rgba(10,10,10,0) 100%),
+    linear-gradient(0deg, rgba(10,10,10,0.6) 0%, rgba(10,10,10,0) 40%);
+}
+.hero--banner .hero__inner { position: relative; width: 100%; }
+.hero--banner .hero__copy {
+  max-width: 44rem;
+  padding-block: clamp(3rem, 8vw, 5.5rem);
+}
+@media (max-width: 940px) {
+  /* A narrow viewport crops the frame to almost nothing, so the scrim goes
+     near-solid and the photograph becomes atmosphere behind the type rather
+     than a subject beside it. */
+  .hero--banner { min-height: auto; }
+  .hero--banner .hero__media img { object-position: 78% 50%; }
+  .hero--banner .hero__scrim {
+    background:
+      linear-gradient(90deg, var(--paper) 0%, rgba(10,10,10,0.93) 46%, rgba(10,10,10,0.72) 100%),
+      linear-gradient(0deg, rgba(10,10,10,0.78) 0%, rgba(10,10,10,0.25) 55%);
+  }
+  .hero--banner .hero__copy { max-width: none; }
+  /* The ribbon is absolute against the hero. On a phone the copy grows tall enough that
+     bottom:4% lands on top of the last stat, so here it returns to the flow instead. */
+  .hero--banner .ruo-ribbon {
+    position: static;
+    display: inline-block;
+    margin-top: 1.4rem;
+  }
+}
+/* Pre-existing, not introduced by the banner: .tagline-bar is an inline-flex row with
+   0.34em tracking and no wrap, so at 390px "PERFORMANCE" ran 4px past the viewport and
+   was clipped by the hero's overflow. It wraps now, and the tracking eases off where
+   there is no room for it. */
+.tagline-bar { flex-wrap: wrap; row-gap: 0.4rem; max-width: 100%; }
+@media (max-width: 420px) {
+  .tagline-bar { letter-spacing: 0.22em; gap: 0.6rem; }
 }
 .hero__grid {
   display: grid;
@@ -1045,8 +1142,15 @@ em, .italic { font-style: italic; }
 }
 .footer__brand .brand__word { color: var(--paper); }
 .footer__tagline { margin-top: 1rem; max-width: 34ch; color: color-mix(in srgb, var(--paper) 72%, transparent); font-size: 0.95rem; }
-.footer__col h4 { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal-light); margin-bottom: 1rem; font-weight: 500; }
+.footer__col h2 { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal-light); margin-bottom: 1rem; font-weight: 500; }
 .footer__col li { margin-bottom: 0.55rem; font-size: 0.9rem; }
+/* 🚨 16px TALL TAP TARGETS. These links are bare inline text with no padding, so on a phone
+   each one is a 16px-high strip — 17 of them stacked, which is exactly the layout where a
+   mis-tap sends someone to the wrong page. Raised to the WCAG 2.5.8 (AA) floor of 24px, not
+   the 44px used for the cart and menu buttons: at 17 links, 44px each would add roughly
+   340px of dead footer to every page on the site. inline-block is required — vertical
+   padding on an inline box does not affect the hit area. */
+.footer__col li a { display: inline-block; padding-block: 4px; min-height: 24px; }
 .footer__ruo {
   border-top: 1px solid rgba(246,242,234,0.14);
   padding-block: 1.4rem;
@@ -1113,7 +1217,7 @@ em, .italic { font-style: italic; }
 }
 .drawer.is-open { transform: translateX(0); }
 .drawer__head { display: flex; align-items: center; justify-content: space-between; padding: 1.3rem 1.5rem; border-bottom: 1px solid var(--line); }
-.drawer__head h3 { font-family: var(--f-display); font-size: var(--step-1); font-weight: 440; }
+.drawer__head h2 { font-family: var(--f-display); font-size: var(--step-1); font-weight: 440; }
 .drawer__body { flex: 1; overflow-y: auto; padding: 1.5rem; }
 .drawer__empty { text-align: center; color: var(--ink-soft); padding-top: 3rem; }
 .drawer__empty svg { color: var(--ink-faint); margin: 0 auto 1rem; }
@@ -1128,8 +1232,27 @@ em, .italic { font-style: italic; }
 .cart-ack { margin: 0.5rem 0 1rem; }
 
 /* ---- reveal animation -------------------------------------------------- */
+/* 🚨 THE PAGE MUST NOT DEPEND ON JS TO BE READABLE. `.reveal` starts at opacity:0 and is
+   only ever un-hidden by the IntersectionObserver in js/app.js. That means ANY failure of
+   that one file — a network blip, a syntax error, a blocked script, JS switched off — leaves
+   the homepage with no headline, no subcopy and no call to action: 26 elements on `/` alone,
+   including the h1. Two independent backstops, because the hero is the whole page:
+
+   1. `scripting: none` covers JS switched off or unsupported, with no delay and no flash.
+   2. The failsafe animation covers the case CSS cannot detect — scripting IS enabled but
+      app.js never ran. app.js adds `.reveals-ready` to <html> as its first action, so the
+      animation is armed only while that class is absent. If app.js runs, nothing waits; if
+      it never runs, everything fades in at 3s instead of staying invisible for ever.
+      It must stay armed on `html:not(.reveals-ready)` rather than on `.reveal` itself,
+      or it would also un-hide below-the-fold content on a healthy page and destroy the
+      scroll reveal it exists to protect. */
 .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
 .reveal.is-in { opacity: 1; transform: none; }
+@media (scripting: none) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+html:not(.reveals-ready) .reveal { animation: reveal-failsafe 0.4s var(--ease-out) 3s forwards; }
+@keyframes reveal-failsafe { to { opacity: 1; transform: none; } }
 .reveal[data-delay="1"] { transition-delay: 0.08s; }
 .reveal[data-delay="2"] { transition-delay: 0.16s; }
 .reveal[data-delay="3"] { transition-delay: 0.24s; }
@@ -1250,7 +1373,19 @@ em, .italic { font-style: italic; }
 .calc__figure span { font-size: 0.4em; color: var(--teal-light); font-family: var(--f-mono); letter-spacing: 0.02em; }
 .calc__sub { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal-light); margin-top: 0.7rem; }
 .calc__row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-@media (max-width: 720px) { .calc { grid-template-columns: 1fr; } .calc__result { order: -1; } }
+/* 🚨 THIS ROW OVERFLOWED EVERY PHONE. Two things had to be true at once and both were:
+   the row never collapsed to a single column, AND grid items default to min-width:auto,
+   so each <input>'s intrinsic width became the floor the track could not shrink past.
+   Measured at a 390px viewport: the row laid out at 474px and pushed the document to
+   492px on /checkout/ and 519px on /reconstitution-calculator/ — the only two pages on
+   the site that scrolled sideways. min-width:0 is the half people forget; without it the
+   single column would still be floored by the input. */
+.calc__row > * { min-width: 0; }
+@media (max-width: 720px) {
+  .calc { grid-template-columns: 1fr; }
+  .calc__result { order: -1; }
+  .calc__row { grid-template-columns: 1fr; }
+}
 
 /* ---- utilities --------------------------------------------------------- */
 .text-center { text-align: center; }
@@ -1277,7 +1412,7 @@ em, .italic { font-style: italic; }
   .nav, .header__actions .desktop-only { display: none; }
   .nav-toggle {
     display: inline-grid; place-items: center;
-    width: 42px; height: 42px;
+    width: 44px; height: 44px;   /* was 42 — see .icon-btn */
   }
   .nav-toggle span { width: 20px; height: 1.5px; background: var(--ink); position: relative; transition: transform 0.3s, opacity 0.3s; }
   .nav-toggle span::before, .nav-toggle span::after { content: ""; position: absolute; left: 0; width: 20px; height: 1.5px; background: var(--ink); transition: transform 0.3s; }
@@ -1339,7 +1474,7 @@ body {
 /* display serif needs more weight than the old variable serif did */
 .section-head__title, .page-hero__title, .hero__title, .article__title,
 .pdp__title, .spotlight__name, .step__title, .card__name, .post-card__title,
-.drawer__head h3, .prose h2, .prose h3 { font-weight: 500; }
+.drawer__head h2, .prose h2, .prose h3 { font-weight: 500; }
 .display { font-weight: 500; }
 
 /* ---- brand lockup ------------------------------------------------------ */
@@ -1422,7 +1557,10 @@ body {
 /* ---- badges ------------------------------------------------------------ */
 .badge { background: #1d1c19; color: var(--ink-2); border: 1px solid var(--line-2); }
 .badge--sale { background: var(--gold-grad); color: #14100a; border: none; }
-.badge--sold { background: #1a1a18; color: var(--ink-faint); }
+/* --ink-faint (#7f7a6c) on this background is 4.07:1, under the 4.5 AA floor for text this
+   small (0.62rem). --ink-soft measures 6.45:1, is still clearly the quietest badge on the
+   card, and is what the base rule above already uses — the dark override had downgraded it. */
+.badge--sold { background: #1a1a18; color: var(--ink-soft); }
 .cart-count { background: var(--gold); color: #0a0a0a; }
 
 /* ---- cards : charcoal with gold detailing ------------------------------ */
@@ -1547,7 +1685,7 @@ body {
 .footer a:hover { color: var(--gold-hi); }
 .footer__brand .brand__word { color: transparent; }
 .footer__tagline { color: color-mix(in srgb, var(--ink) 62%, transparent); }
-.footer__col h4 { color: var(--gold); }
+.footer__col h2 { color: var(--gold); }
 .footer__ruo { border-top-color: rgba(236, 231, 218, 0.09); color: var(--gold); }
 .footer__legal { border-top-color: rgba(236, 231, 218, 0.09); color: color-mix(in srgb, var(--ink) 55%, transparent); }
 .footer__legal p strong { color: var(--ink) !important; }
