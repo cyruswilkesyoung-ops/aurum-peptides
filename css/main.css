@@ -1893,3 +1893,95 @@ body {
   .admin-track { margin-left: 0; width: 100%; }
   .admin-track input { flex: 1; width: auto; }
 }
+
+/* ============================================================================
+   ENTRY GATE
+   Armed by js/age-gate.js, which adds `gate-armed` to <html> the moment it
+   runs. Nothing here hides the page unless that class is present, so a script
+   that never loads leaves the storefront perfectly usable rather than blank.
+   ========================================================================== */
+html.gate-armed,
+html.gate-armed body { overflow: hidden; }
+
+/* Everything except the gate itself. visibility rather than display so the
+   page underneath keeps its layout and does not reflow on dismissal. */
+html.gate-armed body > *:not(.agegate) { visibility: hidden; }
+
+.agegate {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: clamp(1.5rem, 6vw, 4rem);
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(201, 168, 76, 0.07), transparent 60%),
+    var(--paper);
+  animation: agegate-in 0.35s var(--ease-out) both;
+}
+@keyframes agegate-in { from { opacity: 0 } to { opacity: 1 } }
+
+.agegate.is-leaving { animation: agegate-out 0.25s var(--ease-out) both; }
+@keyframes agegate-out { to { opacity: 0 } }
+
+.agegate__inner { max-width: 34rem; text-align: center; }
+
+.agegate__mark {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 0;
+}
+.agegate__mark b { display: block; font-weight: 500; font-size: 0.62rem; color: var(--teal); }
+
+.agegate__rule {
+  display: block;
+  width: 2.5rem;
+  height: 1px;
+  margin: 1.6rem auto;
+  background: var(--teal);
+  opacity: 0.6;
+}
+
+.agegate__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.9rem, 5.5vw, 3rem);
+  line-height: 1.12;
+  color: var(--ink);
+  margin: 0 0 1.1rem;
+}
+
+.agegate__lead {
+  color: var(--ink-soft);
+  font-size: 0.98rem;
+  line-height: 1.65;
+  margin: 0 0 2.2rem;
+}
+
+.agegate__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  justify-content: center;
+}
+.agegate__actions .btn { min-width: 12rem; }
+
+.agegate__fine {
+  margin: 2.2rem 0 0;
+  font-size: 0.76rem;
+  line-height: 1.6;
+  color: var(--ink-faint);
+}
+.agegate__fine a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; }
+
+/* The refusal state. Same frame, no way forward, no second chance button that
+   would make the first answer meaningless. */
+.agegate.is-declined .agegate__title { color: var(--ink-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .agegate, .agegate.is-leaving { animation: none; }
+}
