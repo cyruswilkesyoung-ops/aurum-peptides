@@ -111,3 +111,23 @@
     build();
   }
 })();
+
+/* ---------------------------------------------------------------------------
+   Packshot fallback.
+   This lives here rather than in app.js because app.js is deferred: by the time
+   it runs an image has already failed and the error event is long gone. This
+   file is synchronous in <head>, which is the only place early enough to catch
+   it. Registered in the capture phase because resource errors do not bubble.
+
+   Every <img> pointing at a photograph carries data-fallback naming the drawn
+   packshot it replaced, and every one of those SVGs is still in the repo. So a
+   photograph that is missing, misnamed or half-uploaded shows the original
+   artwork instead of a broken-image box on 143 product images. */
+window.addEventListener('error', function (e) {
+  var el = e && e.target;
+  if (!el || el.tagName !== 'IMG') return;
+  var alt = el.getAttribute('data-fallback');
+  if (!alt || el.getAttribute('data-fell-back')) return;
+  el.setAttribute('data-fell-back', '1');
+  el.src = alt;
+}, true);

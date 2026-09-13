@@ -98,12 +98,25 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# `immutable` promises the browser this URL's bytes will never change, so it is
+# told not to revalidate for a year. That is only true for filenames carrying a
+# content hash. css/main.css, js/app.js and js/age-gate.js are stable names whose
+# contents DO change, so the promise was false: anyone who had visited the site
+# kept the old stylesheet and never saw a single later change, including the age
+# gate, whose styles all live in main.css. A returning visitor ran the gate script
+# against a stylesheet that had no rules for it, so the gate was built and then
+# rendered as an unstyled, invisible div.
+#
+# These now revalidate. That costs one conditional request per file per visit,
+# answered with a 304 and no body when nothing changed, which is the right trade
+# for a stable filename. Do not put `immutable` back unless the filenames start
+# carrying hashes.
 [[headers]]
   for = "/css/*"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/js/*"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"

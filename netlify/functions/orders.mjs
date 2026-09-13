@@ -71,7 +71,7 @@ export default async (req) => {
   // settle — better a loud failure the owner hears about on day one.
   const methods = paymentMethods();
   if (!methods.length) {
-    console.error('[orders] REFUSED: no payment method configured. Set CRYPTO_* or CASHAPP_HANDLE.');
+    console.error('[orders] REFUSED: no payment method configured. Set one of CRYPTO_BTC_ADDRESS, CRYPTO_ETH_ADDRESS, CRYPTO_USDT_ADDRESS, CRYPTO_USDC_ADDRESS, CASHAPP_CASHTAG or ZELLE_CONTACT in Netlify, then REDEPLOY. Variables do not apply to running functions until the site rebuilds.');
     return fail('Checkout is temporarily unavailable. Please contact support.', 503);
   }
 
