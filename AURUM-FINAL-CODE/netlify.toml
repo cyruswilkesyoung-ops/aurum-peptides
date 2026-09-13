@@ -1,0 +1,122 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# The previous version of this file pointed at absolute Windows paths on a laptop,
+# for a DIFFERENT project:
+#     functionsDirectory = "C:\Users\...\purelabs\netlify\functions"
+#     publish            = "C:\Users\...\purelabs\dist"
+#     command            = "npm run build"      (there was no package.json)
+# None of those resolve on Netlify's Linux builders, so no functions were ever
+# deployed and /api/orders returned 404 — which is why checkout could not place an
+# order. Everything below is repo-relative.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[build]
+  publish = "."
+  # Regenerates netlify/functions/_catalog.json from the product pages on every deploy,
+  # so the prices the server charges are always the prices the pages rendered.
+  command = "node scripts/build-catalog.mjs"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# ---- API ---------------------------------------------------------------------
+# js/app.js calls these three paths. Most specific first.
+[[redirects]]
+  from = "/api/admin/orders/update"
+  to = "/.netlify/functions/admin-orders-update"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/admin/orders"
+  to = "/.netlify/functions/admin-orders"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/orders"
+  to = "/.netlify/functions/orders"
+  status = 200
+  force = true
+
+# publish = "." means the whole repo is served, so the server source and the generated
+# catalogue would otherwise be fetchable as static files. They hold no secrets — every
+# credential comes from the environment — but they are not part of the site.
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/scripts/*"
+  to = "/404.html"
+  status = 404
+
+# publish = "." means the repo root is the deployed site, so everything Netlify
+# installs during the build ships with it. node_modules is thousands of files
+# including dependencies' own HTML docs pages, which have no business being
+# reachable on a storefront. Same for the test suite.
+[[redirects]]
+  from = "/node_modules/*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/tests/*"
+  to = "/404.html"
+  status = 404
+
+# ---- headers (unchanged from the original file) -------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+[[headers]]
+  for = "/checkout/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/order/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# `immutable` promises the browser this URL's bytes will never change, so it is
+# told not to revalidate for a year. That is only true for filenames carrying a
+# content hash. css/main.css, js/app.js and js/age-gate.js are stable names whose
+# contents DO change, so the promise was false: anyone who had visited the site
+# kept the old stylesheet and never saw a single later change, including the age
+# gate, whose styles all live in main.css. A returning visitor ran the gate script
+# against a stylesheet that had no rules for it, so the gate was built and then
+# rendered as an unstyled, invisible div.
+#
+# These now revalidate. That costs one conditional request per file per visit,
+# answered with a 304 and no body when nothing changed, which is the right trade
+# for a stable filename. Do not put `immutable` back unless the filenames start
+# carrying hashes.
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
