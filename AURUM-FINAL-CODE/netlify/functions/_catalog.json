@@ -1,0 +1,626 @@
+{
+  "generatedAt": "2026-09-13T00:33:30.543Z",
+  "products": {
+    "acetic-acid": {
+      "slug": "acetic-acid",
+      "name": "Acetic Acid 0.6% — 10 Pack",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": "3 mL ×10",
+          "label": "3 mL ×10",
+          "price": 29.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "ahk-cu": {
+      "slug": "ahk-cu",
+      "name": "AHK-Cu",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 50,
+          "label": "50 mg",
+          "price": 69.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "bac-water-10ml": {
+      "slug": "bac-water-10ml",
+      "name": "Bacteriostatic Water 10 mL",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": "10 mL",
+          "label": "10 mL",
+          "price": 10
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "bac-water-30ml": {
+      "slug": "bac-water-30ml",
+      "name": "Bacteriostatic Water 30 mL",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": "30 mL",
+          "label": "30 mL",
+          "price": 19.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "bpc-157": {
+      "slug": "bpc-157",
+      "name": "BPC-157",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 5,
+          "label": "5 mg",
+          "price": 49.99
+        },
+        {
+          "mgKey": 10,
+          "label": "10 mg",
+          "price": 79.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "cjc-1295-dac": {
+      "slug": "cjc-1295-dac",
+      "name": "CJC-1295 w/DAC",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 5,
+          "label": "5 mg",
+          "price": 64.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "cjc-1295-no-dac": {
+      "slug": "cjc-1295-no-dac",
+      "name": "CJC-1295 No DAC",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 5,
+          "label": "5 mg",
+          "price": 54.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "dsip": {
+      "slug": "dsip",
+      "name": "DSIP",
+      "soldOut": true,
+      "variants": [
+        {
+          "mgKey": 5,
+          "label": "5 mg",
+          "price": 49.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "epithalon": {
+      "slug": "epithalon",
+      "name": "Epithalon",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 10,
+          "label": "10 mg",
+          "price": 44.99
+        },
+        {
+          "mgKey": 50,
+          "label": "50 mg",
+          "price": 89.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "ghk-cu": {
+      "slug": "ghk-cu",
+      "name": "GHK-Cu",
+      "soldOut": true,
+      "variants": [
+        {
+          "mgKey": 50,
+          "label": "50 mg",
+          "price": 49.99
+        },
+        {
+          "mgKey": 100,
+          "label": "100 mg",
+          "price": 69.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "glow": {
+      "slug": "glow",
+      "name": "GLOW-70",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 70,
+          "label": "70 mg",
+          "price": 119
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "glp-2-trz": {
+      "slug": "glp-2-trz",
+      "name": "GLP-2 TRZ",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 10,
+          "label": "10 mg",
+          "price": 69.99
+        },
+        {
+          "mgKey": 30,
+          "label": "30 mg",
+          "price": 179.99
+        },
+        {
+          "mgKey": 60,
+          "label": "60 mg",
+          "price": 309.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "glp-3-rt": {
+      "slug": "glp-3-rt",
+      "name": "GLP-3 RT",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 10,
+          "label": "10 mg",
+          "price": 69.99
+        },
+        {
+          "mgKey": 30,
+          "label": "30 mg",
+          "price": 169.99
+        },
+        {
+          "mgKey": 60,
+          "label": "60 mg",
+          "price": 300
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "klow": {
+      "slug": "klow",
+      "name": "KLOW",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 80,
+          "label": "80 mg",
+          "price": 120
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "mots-c": {
+      "slug": "mots-c",
+      "name": "MOTS-c",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 10,
+          "label": "10 mg",
+          "price": 49.99
+        },
+        {
+          "mgKey": 30,
+          "label": "30 mg",
+          "price": 109.99
+        },
+        {
+          "mgKey": 60,
+          "label": "60 mg",
+          "price": 159.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "nad": {
+      "slug": "nad",
+      "name": "NAD+",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 100,
+          "label": "100 mg",
+          "price": 59.99
+        },
+        {
+          "mgKey": 500,
+          "label": "500 mg",
+          "price": 94.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "tesamorelin": {
+      "slug": "tesamorelin",
+      "name": "Tesamorelin",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 5,
+          "label": "5 mg",
+          "price": 49.99
+        },
+        {
+          "mgKey": 10,
+          "label": "10 mg",
+          "price": 89.99
+        },
+        {
+          "mgKey": 20,
+          "label": "20 mg",
+          "price": 139
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "thymosin-alpha-1": {
+      "slug": "thymosin-alpha-1",
+      "name": "Thymosin Alpha-1",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 5,
+          "label": "5 mg",
+          "price": 50
+        },
+        {
+          "mgKey": 10,
+          "label": "10 mg",
+          "price": 69.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    },
+    "wolverine-blend": {
+      "slug": "wolverine-blend",
+      "name": "Wolverine Blend",
+      "soldOut": false,
+      "variants": [
+        {
+          "mgKey": 20,
+          "label": "20 mg",
+          "price": 79.99
+        },
+        {
+          "mgKey": 40,
+          "label": "40 mg",
+          "price": 119.99
+        }
+      ],
+      "bundles": [
+        {
+          "qty": 1,
+          "label": "Single vial",
+          "save": 0
+        },
+        {
+          "qty": 3,
+          "label": "Bundle of 3",
+          "save": 0.1
+        },
+        {
+          "qty": 5,
+          "label": "Bundle of 5",
+          "save": 0.15
+        }
+      ]
+    }
+  }
+}

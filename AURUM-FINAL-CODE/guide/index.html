@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How This Site Was Built — Design &amp; SEO | Aurum</title>
+  <meta name="description" content="A build note: the design system, vector visual language, compliance architecture and technical SEO behind the Aurum Peptides redesign by Claude Fable 5.">
+  <link rel="canonical" href="https://aurum-peptides.netlify.app/guide/">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="format-detection" content="telephone=no">
+  <meta property="og:site_name" content="Aurum Peptides">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="How This Site Was Built — Design &amp; SEO | Aurum">
+  <meta property="og:description" content="A build note: the design system, vector visual language, compliance architecture and technical SEO behind the Aurum Peptides redesign by Claude Fable 5.">
+  <meta property="og:url" content="https://aurum-peptides.netlify.app/guide/">
+  <meta property="og:image" content="https://aurum-peptides.netlify.app/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How This Site Was Built — Design &amp; SEO | Aurum">
+  <meta name="twitter:description" content="A build note: the design system, vector visual language, compliance architecture and technical SEO behind the Aurum Peptides redesign by Claude Fable 5.">
+  <meta name="twitter:image" content="https://aurum-peptides.netlify.app/assets/og.png">
+  
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon.png" sizes="96x96">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cinzel:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cinzel:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cinzel:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap"></noscript>
+  <script src="/js/age-gate.js?v=20260913"></script>
+  <link rel="stylesheet" href="/css/main.css?v=20260913">
+  
+</head>
+<body class="">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+  
+
+<div class="announce">
+  <div class="announce__track">
+    <span class="announce__item">100% synthesized in the USA</span>
+    <span class="announce__dot"></span>
+    <span class="announce__item">≥99% purity · COA every batch</span>
+    <span class="announce__dot"></span>
+    <span class="announce__item">Free shipping over $150.00</span>
+    <span class="announce__dot"></span>
+    <span class="announce__item">For research use only</span>
+  </div>
+</div>
+<header class="header">
+  <div class="wrap wrap--wide header__inner">
+    <a class="brand" href="/" aria-label="Aurum Peptides home">
+      <span class="brand__lockup">
+    <svg class="logo-mark" width="40" height="40" viewBox="0 0 100 104" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="auhdg" x1="20" y1="14" x2="84" y2="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E7CD8A"/>
+      <stop offset="0.48" stop-color="#C9A84C"/>
+      <stop offset="1" stop-color="#8A6F2E"/>
+    </linearGradient>
+  </defs>
+  <!-- hexagon frame -->
+  <path d="M50 15 78 31.5v33L50 81 22 64.5v-33Z" stroke="url(#auhdg)" stroke-width="2.6" stroke-linejoin="miter"/>
+  <!-- bond chains -->
+  <g stroke="url(#auhdg)" stroke-width="2.2" stroke-linecap="round">
+    <path d="M22 48 12.5 55.5"/>
+    <path d="M10 57.5 4.5 63"/>
+    <path d="M78 48l9.5 7.5"/>
+    <path d="M90 57.5l5.5 5.5"/>
+  </g>
+  <g fill="url(#auhdg)">
+    <circle cx="12" cy="56" r="3.4"/>
+    <circle cx="4.8" cy="63.4" r="2.4"/>
+    <circle cx="88" cy="56" r="3.4"/>
+    <circle cx="95.2" cy="63.4" r="2.4"/>
+  </g>
+  <!-- the A : thick right wedge -->
+  <path fill="url(#auhdg)" d="M51.5 20.5 57.8 20.5 73.5 76.5 64.6 76.5Z"/>
+  <!-- right foot serif -->
+  <path fill="url(#auhdg)" d="M62.5 76.5h13.4l1.1 3.4H61.6Z"/>
+  <!-- the A : thin left stroke with tail past the frame -->
+  <path fill="url(#auhdg)" d="M51.5 20.5 55 20.5 34.6 90.2c-1 3.4-3.2 5.8-7 6.8 2.3-2.2 3.4-4.3 4.2-7.2Z"/>
+  <!-- crossbar slash -->
+  <path fill="url(#auhdg)" d="M38.6 60.4 61.2 54.8l-.9 3.2-22.6 5.6Z"/>
+  <!-- interior probe : needle + node -->
+  <path d="M37.5 74 46 58.5" stroke="url(#auhdg)" stroke-width="1.8" stroke-linecap="round"/>
+  <circle cx="47" cy="56.5" r="3" fill="url(#auhdg)"/>
+</svg>
+    <span class="brand__stack">
+      <span class="brand__word">AURUM</span>
+      <span class="brand__sub"><i></i>PEPTIDES<i></i></span>
+    </span>
+  </span>
+    </a>
+    <nav class="nav" aria-label="Primary"><a class="nav__link" href="/shop/">Shop</a><div class="nav__item">
+        <a class="nav__link" href="/categories/">Categories</a>
+        <div class="nav__mega">
+          <a href="/categories/peptides/">Peptides <span>13</span></a><a href="/categories/peptide-blends/">Peptide Blends <span>3</span></a><a href="/categories/liquids/">Liquids <span>2</span></a><a href="/categories/lab-supplies/">Lab Supplies <span>1</span></a>
+        </div>
+      </div><a class="nav__link" href="/certificates/">Certificates</a><a class="nav__link" href="/blog/">Blog</a><a class="nav__link" href="/about/">About</a><a class="nav__link" href="/contact/">Contact</a></nav>
+    <div class="header__actions">
+      <a class="icon-btn desktop-only" href="/certificates/" aria-label="Certificates"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 15.5h6M9 8.5h3"/></svg></a>
+      <button class="icon-btn" data-open-cart aria-label="Open cart" style="position:relative">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M3 7h11v8H3z"/><path d="M14 10h4l3 3v2h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/></svg>
+        <span class="cart-count" data-cart-count style="display:none">0</span>
+      </button>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu"><span></span></button>
+    </div>
+  </div>
+</header>
+<nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+  <a href="/shop/">Shop</a><a href="/categories/">Categories</a><a href="/certificates/">Certificates</a><a href="/blog/">Blog</a><a href="/about/">About</a><a href="/contact/">Contact</a>
+  <a href="/shop/">Shop all <span>→</span></a>
+</nav>
+  <main id="main">
+    
+  <section class="page-hero">
+    <div class="wrap">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a><span>/</span> <span aria-current="page" style="color:var(--ink-soft)">How this site was built</span>
+  </nav>
+      <p class="eyebrow" style="margin-top:1rem">A build note by Claude Fable 5</p>
+      <h1 class="page-hero__title" style="margin-top:.6rem">How this site was built</h1>
+      <p class="page-hero__lead">The design system, the compliance architecture, the SEO build, and the engineering behind the Aurum Peptides rebrand — documented so the approach is reusable.</p>
+    </div>
+  </section>
+  <section class="section" style="padding-top:var(--sp-4)">
+    <div class="wrap">
+      <div class="article">
+        <div class="prose reveal">
+          <p class="note">This page is meta-documentation: a candid account of how the site in front of you was designed and engineered, written for anyone who wants to understand or reproduce the method.</p>
+
+          <h2>The brief, in one line</h2><p>Rebrand an existing US research-peptide storefront into <strong>Aurum Peptides</strong> — same products, same structure, an entirely new visual identity built around the Aurum hexagon-A logo: refined gold on true black, high-end biotech meets luxury goods, with the Oath Peptides reference informing layout structure and clinical restraint only.</p>
+
+          <h2>Design system</h2>
+            <h3>Palette</h3>
+            <p>Two surfaces and one metal. True black (<code>#0a0a0a</code>) and deep charcoal (<code>#141414</code>) carry everything; a refined gold (<code>#c9a84c</code>, with a metallic gradient from <code>#e7cd8a</code> to <code>#8a6f2e</code>) appears only where it earns its place — the wordmark, hairlines, CAS numbers, active states, the crimp cap of every vial. Body text is off-white bone (<code>#ece7da</code>), never pure white, so the page glows rather than glares. Copper-class compounds (GHK-Cu, AHK-Cu) carry a bronze variant of the accent so chroma still means something inside the metallic family.</p>
+            <h3>Typography</h3>
+            <p>Four voices, each with one job. <strong>Cinzel</strong> — engraved, wide-tracked capitals matching the logotype — is reserved for the wordmark alone. <strong>Cormorant Garamond</strong>, a high-contrast serif in the same genus as the logo's letterforms, carries display headlines. <strong>Inter</strong> does interface work, and <strong>IBM&nbsp;Plex&nbsp;Mono</strong> remains the laboratory register — CAS numbers, batch codes, specifications. The luxury/laboratory tension lives in that pairing: an engraved serif against a monospaced data voice.</p>
+            <h3>The logo</h3>
+            <p>The provided Aurum mark — a pointy-top hexagon carrying a high-contrast serif "A" whose thin stroke escapes the frame with a calligraphic tail, flanked by molecular bond chains — was recreated as clean, scalable SVG paths with a three-stop metallic gradient. The same vector renders the header lockup, the favicon, the vial labels and the social card, so the identity is pixel-identical at every size.</p>
+          
+
+          <h2>The visual system is entirely vector</h2>
+            <p>There is no photography anywhere on this site. Every packshot is <strong>hand-authored SVG</strong>, generated per product from its data (name, CAS, strengths, accent): <strong>clear laboratory glass</strong> built from a six-stop translucent gradient so the lyophilized cake or solution inside is plainly visible, a gold crimp cap with rib texture and a gold flip-off button, and a clean white label framed by a thin gold hairline carrying the wordmark, the compound name in serif, the CAS line, the dosage chip and the research-use disclaimer in dark charcoal.</p>
+            <p>Showing the contents is a <em>trust</em> decision as much as an aesthetic one: in a category where opaque packaging invites suspicion, letting a buyer see the material — and read every line on the label without squinting — is the visual equivalent of publishing the certificate. Label type is set in the wordmark's serif for brand-level elements and a neutral sans for the data lines, the way high-end pharmaceutical packaging separates identity from information.</p>
+            <p>This is a deliberate engineering choice with three payoffs: <strong>aesthetic</strong> (uniform, clinical, on-brand — no stock-photo clutter), <strong>performance</strong> (each packshot is a few KB and infinitely crisp — excellent for Largest Contentful Paint), and <strong>compliance</strong> (no photograph can imply human use). The hero vial is a larger composition whose parts animate: a gold light-sweep across the glass, a gentle float, molecule nodes orbiting on an <code>offset-path</code>, and a pointer-tracked 3D tilt.</p>
+          
+
+          <h2>Motion</h2>
+            <p>Restraint over spectacle. Scroll reveals run on a single <code>IntersectionObserver</code> — no animation library, nothing render-blocking. Cross-page navigation uses the native <strong>View Transitions API</strong> for a soft cross-fade where supported, degrading silently elsewhere. Gold light-sweeps cross the primary buttons and product cards on hover; the hero vial tilts subtly toward the pointer; cards lift against a deepened shadow. Every effect is disabled under <code>prefers-reduced-motion</code>.</p>
+          
+
+          <h2>Compliance architecture</h2>
+            <p>In this category, wording is a liability surface, so compliance is <strong>structural, not sprinkled</strong>. Every regulated phrase lives in exactly one place — a compliance lexicon in the site data — and is referenced everywhere it appears. Change it once, it changes on every label, product page, cart and footer, identically.</p>
+            <ul>
+              <li>"For research purposes only. Not for human or veterinary use." renders on every product label (inside the SVG itself), every product page, the cart drawer, and the footer.</li>
+              <li>Product copy has <em>no field</em> for effects, dosing, or administration — the data model literally cannot express them. Descriptions speak only of in-vitro assays, stability, and analytical reference use.</li>
+              <li>The checkout carries a qualified-researcher acknowledgment checkbox that gates the proceed button; a 21+ statement and the FDA "not evaluated" disclaimer sit in the footer site-wide.</li>
+              <li>Blog content is fixed in the research/QA lane — verifying COAs, evaluating suppliers, storage — never protocols or effects. Even alt text and schema fields were audited to avoid health claims.</li>
+              <li>Four legal pages — Terms (with the research-use agreement and buyer certification), Privacy, Shipping &amp; Returns, and a dedicated Disclaimer — are generated from one template.</li>
+            </ul>
+          
+
+          <h2>SEO build</h2>
+            <p>Every page is server-rendered static HTML with a single <code>&lt;h1&gt;</code> and a logical heading hierarchy. Titles are kept under ~60 characters and descriptions under ~160, each unique and keyword-targeted ("research peptides USA", "peptide COA", "buy [compound] research") while staying inside the compliance rules.</p>
+            <ul>
+              <li><strong>Structured data:</strong> Organization and WebSite on the home page, Product with an AggregateOffer on every product, BreadcrumbList site-wide, Article on every post, ItemList on collections — and no health claims in any schema field.</li>
+              <li><strong>Clean URLs</strong> throughout: <code>/shop/bpc-157/</code>, <code>/certificates/</code>, <code>/blog/how-to-verify-peptide-coa/</code>.</li>
+              <li><strong>Open Graph and Twitter cards</strong> on every page, plus a generated 1200×630 OG image, canonical tags, an XML sitemap and a robots.txt.</li>
+              <li><strong>Internal linking</strong> is intentional: posts link to the compounds and the COA page they reference; products cross-link related compounds and their certificate.</li>
+              <li><strong>Descriptive alt text</strong> on every image, describing the vial and label as objects — never implying use.</li>
+            </ul>
+          
+
+          <h2>Engineering</h2>
+            <p>The site is a bespoke static generator: a few hundred lines of Node that read the product, blog and site data and emit plain HTML/CSS/JS into a deployable folder. No client framework ships to the browser. The runtime payload is one small CSS file, one small vanilla-JS file (cart, reveals, variant/bundle pricing, filters), and the SVG assets. Fonts load non-render-blocking. The cart persists in <code>localStorage</code> and everything degrades without JavaScript.</p>
+          
+
+          <h2>Checkout: a manual, off-platform payment flow</h2>
+            <p>There is no card processor on this site. Nothing is ever charged here, and no payment credential is collected, transmitted or stored — a deliberate architecture for a category that mainstream processors decline. The buyer places an order; the order is created server-side with the status <code>pending_payment</code> and a short human-readable reference (<code>AUR-XXXXX</code>, drawn from an alphabet with no 0/O/1/I so it can be read aloud or typed into a payment memo without ambiguity). Funds move out of band — crypto, Cash App or Zelle — and the operator confirms and fulfils manually.</p>
+            <h3>The flow, end to end</h3>
+            <ul>
+              <li><strong>Cart</strong> — quantities, strengths and bundle tiers live in <code>localStorage</code>. Each line stores only identifiers (slug, variant, bundle size, quantity); the prices it displays are for the shopper's benefit and are never the basis of what is owed.</li>
+              <li><strong>Checkout</strong> — name, email, shipping address and order notes, plus the two acknowledgments the rest of the site already carries: 21+ and laboratory-research-use. Submission is blocked in the browser without both, and rejected again on the server if either is missing.</li>
+              <li><strong>Order creation</strong> — a Netlify Function validates every field, <em>re-prices the entire order from a catalog snapshot generated at build time</em>, assigns the reference, writes the record, and emails the buyer and the operator. A tampered browser payload cannot change a price, resurrect a sold-out compound, or order a negative quantity.</li>
+              <li><strong>Payment instructions</strong> — returned in the order response and handed to the confirmation screen through <code>sessionStorage</code>. No reference, total, or personal detail ever appears in a URL. Wallet addresses arrive from server environment variables and render as copyable text alongside a QR code generated server-side.</li>
+              <li><strong>Fulfilment</strong> — a password-gated admin route lists every order and moves it through <em>paid</em>, <em>shipped</em> (with a tracking number) or <em>cancelled</em>, optionally emailing the buyer at each step.</li>
+            </ul>
+            <h3>Why Netlify Blobs for storage</h3>
+            <p>Orders are stored in <strong>Netlify Blobs</strong>. The site already runs on Netlify, so Blobs needs no second vendor, no connection string, no pooled database connections from a serverless context, and no extra secret to rotate; credentials are injected by the platform. Critically, the store is decoupled from the deploy artifact, so <strong>orders survive every redeploy</strong>. At this volume — tens of orders a day, read by one operator — a key/value store is simply the right shape, and a free-tier Postgres would add operational surface for no gain. A filesystem fallback with the same interface keeps local development and the test suite working without the Netlify runtime.</p>
+            <h3>Security posture</h3>
+            <ul>
+              <li>The admin password, email API key and every payment address live only in environment variables read inside functions. A grep of the built client bundle for each of them returns zero hits — that check is part of the release routine.</li>
+              <li>The admin password is compared in <strong>constant time</strong>, sent as a bearer token the operator types, and held only in <code>sessionStorage</code> for the length of a session.</li>
+              <li>Order creation is <strong>rate-limited</strong> to five per IP per ten minutes and admin endpoints to twenty attempts, using a persisted sliding window so the limit survives cold starts. A hidden honeypot field absorbs the simplest bots.</li>
+              <li>All validation is duplicated server-side; the browser's checks are a courtesy, not a control. Checkout, order and admin routes are <code>noindex, nofollow</code>, <code>no-store</code>, and excluded from <code>robots.txt</code> and the sitemap.</li>
+            </ul>
+            <h3>Environment variables</h3>
+            <p>The site runs without any of these — it simply refuses to take an order until at least one payment method is configured. Set them under <em>Site configuration → Environment variables</em>:</p>
+            <ul>
+              <li><code>ADMIN_PASSWORD</code> — gate for <code>/admin/</code>. Required for order management.</li>
+              <li><code>CRYPTO_BTC_ADDRESS</code>, <code>CRYPTO_ETH_ADDRESS</code>, <code>CRYPTO_USDT_ADDRESS</code>, <code>CRYPTO_USDT_NETWORK</code> — wallet addresses; any that are unset are omitted from the payment screen entirely.</li>
+              <li><code>CASHAPP_CASHTAG</code> — with or without the leading <code>$</code>.</li>
+              <li><code>ZELLE_CONTACT</code>, <code>ZELLE_NAME</code> — the email or phone that receives Zelle, and the display name.</li>
+              <li><code>RESEND_API_KEY</code>, <code>EMAIL_FROM</code>, <code>ADMIN_EMAIL</code> — transactional email. If the key is absent, orders still save and display; only the emails are skipped.</li>
+              <li><code>ORDER_CONFIRM_WINDOW</code>, <code>SUPPORT_EMAIL</code> — the "typically confirmed within…" wording and the contact address on the payment screen.</li>
+            </ul>
+            <h3>Confirming and fulfilling an order</h3>
+            <ul>
+              <li>A new order emails you immediately with its reference, total, items and shipping address.</li>
+              <li>When the funds land, match the memo to the reference, open <code>/admin/</code>, sign in, and press <strong>Mark paid</strong> — you'll be asked whether to email the buyer.</li>
+              <li>When it ships, paste the tracking number into the order's field and press <strong>Save &amp; ship</strong>: the order moves to <em>shipped</em> and the buyer receives the tracking email.</li>
+              <li>If a payment never arrives, <strong>Cancel</strong> records the outcome without notifying anyone.</li>
+            </ul>
+            <p>Every buyer-facing screen and message in this flow is strictly transactional and carries the research-use line: no usage, dosing, administration, benefit or outcome language appears anywhere in it.</p>
+          
+
+          <h2>Iteration passes</h2>
+            <p>After the first complete build, three deliberate passes with fresh eyes: a <strong>design</strong> pass (depth, gold discipline, typographic rhythm, dark-theme contrast), a <strong>compliance</strong> pass (every copy block, alt text, meta description and schema field audited against the research-use rules — no dosing, no effects, no human-use implication anywhere), and an <strong>SEO/performance</strong> pass (title and description lengths, structured-data validity, canonical/sitemap coverage, lazy-loading, focus states, reduced motion). Leftover references to the previous brand were hunted with a source-wide sweep.</p>
+          
+
+          <h2>Credits</h2><p>Design and engineering by <strong>Claude Fable 5</strong> (Anthropic), from a brief and logo supplied by the site owner. Built as a demonstration of end-to-end brand implementation, compliance-aware copywriting and technical SEO. The compound data, CAS identifiers and price structure carry over from the original catalog; all imagery is original vector work in the Aurum identity.</p>
+
+          <p class="note">For research purposes only. Not for human or veterinary use. This build note is documentation of a design process and contains no guidance for use of any compound.</p>
+        </div>
+        <div class="text-center mt-5 reveal">
+          <a class="btn" href="/">Back to the site <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+  
+<footer class="footer">
+  <div class="wrap wrap--wide">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <a class="brand" href="/" aria-label="Aurum Peptides home">
+          <span class="brand__lockup">
+    <svg class="logo-mark" width="40" height="40" viewBox="0 0 100 104" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="auftg" x1="20" y1="14" x2="84" y2="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E7CD8A"/>
+      <stop offset="0.48" stop-color="#C9A84C"/>
+      <stop offset="1" stop-color="#8A6F2E"/>
+    </linearGradient>
+  </defs>
+  <!-- hexagon frame -->
+  <path d="M50 15 78 31.5v33L50 81 22 64.5v-33Z" stroke="url(#auftg)" stroke-width="2.6" stroke-linejoin="miter"/>
+  <!-- bond chains -->
+  <g stroke="url(#auftg)" stroke-width="2.2" stroke-linecap="round">
+    <path d="M22 48 12.5 55.5"/>
+    <path d="M10 57.5 4.5 63"/>
+    <path d="M78 48l9.5 7.5"/>
+    <path d="M90 57.5l5.5 5.5"/>
+  </g>
+  <g fill="url(#auftg)">
+    <circle cx="12" cy="56" r="3.4"/>
+    <circle cx="4.8" cy="63.4" r="2.4"/>
+    <circle cx="88" cy="56" r="3.4"/>
+    <circle cx="95.2" cy="63.4" r="2.4"/>
+  </g>
+  <!-- the A : thick right wedge -->
+  <path fill="url(#auftg)" d="M51.5 20.5 57.8 20.5 73.5 76.5 64.6 76.5Z"/>
+  <!-- right foot serif -->
+  <path fill="url(#auftg)" d="M62.5 76.5h13.4l1.1 3.4H61.6Z"/>
+  <!-- the A : thin left stroke with tail past the frame -->
+  <path fill="url(#auftg)" d="M51.5 20.5 55 20.5 34.6 90.2c-1 3.4-3.2 5.8-7 6.8 2.3-2.2 3.4-4.3 4.2-7.2Z"/>
+  <!-- crossbar slash -->
+  <path fill="url(#auftg)" d="M38.6 60.4 61.2 54.8l-.9 3.2-22.6 5.6Z"/>
+  <!-- interior probe : needle + node -->
+  <path d="M37.5 74 46 58.5" stroke="url(#auftg)" stroke-width="1.8" stroke-linecap="round"/>
+  <circle cx="47" cy="56.5" r="3" fill="url(#auftg)"/>
+</svg>
+    <span class="brand__stack">
+      <span class="brand__word">AURUM</span>
+      <span class="brand__sub"><i></i>PEPTIDES<i></i></span>
+    </span>
+  </span>
+        </a>
+        <p class="footer__tagline">US-based research peptides verified to ≥99% purity, with a batch COA on every vial. Research | Precision | Performance. For laboratory research use only.</p>
+        <div style="display:flex;gap:.6rem;margin-top:1.4rem" class="mono" >
+          <span class="chip">EST. 2023</span>
+          <span class="chip">MADE IN THE USA</span>
+        </div>
+      </div>
+      <div class="footer__col">
+        <h2>Shop</h2>
+        <ul>
+          <li><a href="/categories/peptides/">Peptides</a></li><li><a href="/categories/peptide-blends/">Peptide Blends</a></li><li><a href="/categories/liquids/">Liquids</a></li><li><a href="/categories/lab-supplies/">Lab Supplies</a></li>
+          <li><a href="/shop/">All products</a></li>
+          <li><a href="/certificates/">Certificates (COAs)</a></li>
+          <li><a href="/reconstitution-calculator/">Reconstitution calculator</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h2>Company</h2>
+        <ul>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/blog/">Research Guides</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/guide/">How this site was built</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h2>Contact</h2>
+        <ul>
+          <li><a href="mailto:support@aurumpeptides.com">support@aurumpeptides.com</a></li>
+          <li><a href="tel:+19497952085">+1 (949) 795-2085</a></li>
+          <li>Costa Mesa, California, USA</li>
+          <li style="color:var(--teal-light)">Mon–Fri 7:00–19:00 · Sat–Sun 10:00–17:00 PT</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__ruo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M9 3h6M10 3v6l-5 8.5A2 2 0 0 0 6.7 21h10.6a2 2 0 0 0 1.7-3.5L14 9V3"/><path d="M7.5 15h9"/></svg>
+      <span>For research purposes only. Not for human or veterinary use.</span>
+    </div>
+    <div class="footer__legal">
+      <p><strong style="color:var(--paper)">Age &amp; qualification.</strong> You must be 21 years or older to purchase. All products are sold for laboratory and research applications only.</p>
+      <p><strong style="color:var(--paper)">FDA notice.</strong> These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products are sold strictly as research chemicals for in-vitro laboratory use and are not intended for human or veterinary use, ingestion, or any form of clinical application.</p>
+    </div>
+    <div class="footer__bottom">
+      <span>© <span data-year>2026</span> Aurum Peptides. All rights reserved.</span>
+      <nav aria-label="Legal"><a href="/terms/">Terms of Service</a><a href="/privacy/">Privacy Policy</a><a href="/shipping/">Shipping & Returns</a><a href="/disclaimer/">Disclaimer</a></nav>
+    </div>
+  </div>
+</footer>
+  
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="cartDrawer" aria-label="Shopping cart" aria-hidden="true">
+  <div class="drawer__head">
+    <h2>Your cart</h2>
+    <button class="icon-btn" data-close-cart aria-label="Close cart">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="drawer__body" id="cartBody"></div>
+  <div class="drawer__foot" id="cartFoot" hidden>
+    <div style="display:flex;justify-content:space-between;margin-bottom:.4rem">
+      <span style="color:var(--ink-soft);font-size:.9rem">Subtotal</span>
+      <span id="cartSubtotal" class="serif" style="font-weight:460"></span>
+    </div>
+    <p id="cartShip" class="mono" style="font-size:.7rem;color:var(--accent-deep);margin-bottom:1rem"></p>
+    <label class="checkbox cart-ack">
+      <input type="checkbox" id="cartAck">
+      <span>I certify that I am a qualified researcher aged 21 or older and that all products purchased are for laboratory and research use only — not for human or veterinary consumption.</span>
+    </label>
+    <a class="btn btn--block" id="checkoutBtn" href="/checkout/" aria-disabled="true">Proceed to checkout <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></a>
+    <p class="mono" style="font-size:.62rem;color:var(--ink-faint);text-align:center;margin-top:.8rem;letter-spacing:.06em">FOR RESEARCH PURPOSES ONLY. NOT FOR HUMAN OR VETERINARY USE.</p>
+  </div>
+</aside>
+  <script src="/js/app.js?v=20260913" defer></script>
+</body>
+</html>

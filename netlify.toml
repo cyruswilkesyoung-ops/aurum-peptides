@@ -52,6 +52,20 @@
   to = "/404.html"
   status = 404
 
+# publish = "." means the repo root is the deployed site, so everything Netlify
+# installs during the build ships with it. node_modules is thousands of files
+# including dependencies' own HTML docs pages, which have no business being
+# reachable on a storefront. Same for the test suite.
+[[redirects]]
+  from = "/node_modules/*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/tests/*"
+  to = "/404.html"
+  status = 404
+
 # ---- headers (unchanged from the original file) -------------------------------
 [[headers]]
   for = "/*"
