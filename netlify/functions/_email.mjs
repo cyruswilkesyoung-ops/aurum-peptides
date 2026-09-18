@@ -13,7 +13,7 @@
       rather than letting the panel tell Cyrus a buyer was told something they
       were not.
 
-   Provider is Resend, which is what /guide/ already documents. */
+   Provider is Resend, which is what netlify/OWNER-SETUP.md documents. */
 
 const API = 'https://api.resend.com/emails';
 const TIMEOUT_MS = 5000;

@@ -46,11 +46,13 @@
   from = "/netlify/*"
   to = "/404.html"
   status = 404
+  force = true
 
 [[redirects]]
   from = "/scripts/*"
   to = "/404.html"
   status = 404
+  force = true
 
 # publish = "." means the repo root is the deployed site, so everything Netlify
 # installs during the build ships with it. node_modules is thousands of files
@@ -60,11 +62,28 @@
   from = "/node_modules/*"
   to = "/404.html"
   status = 404
+  force = true
 
 [[redirects]]
   from = "/tests/*"
   to = "/404.html"
   status = 404
+  force = true
+
+# Without force = true a redirect never shadows a real file, so every rule above
+# was inert: the function source, scripts and tests were all downloadable. Same
+# treatment for the package manifests.
+[[redirects]]
+  from = "/package.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/404.html"
+  status = 404
+  force = true
 
 # ---- headers (unchanged from the original file) -------------------------------
 [[headers]]
@@ -120,3 +139,10 @@
   for = "/js/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# The old "How this site was built" page is gone. Anyone holding the link lands home.
+[[redirects]]
+  from = "/guide/*"
+  to = "/"
+  status = 301
+  force = true
