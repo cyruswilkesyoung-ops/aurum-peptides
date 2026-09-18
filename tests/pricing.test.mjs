@@ -71,7 +71,7 @@ ok('crypto appears when an address is set', m.some(x => x.id==='crypto' && x.coi
 ok('cashapp handle gets its $ prefix', m.find(x=>x.id==='cashapp')?.handle === '$aurum');
 ok('unset coins are omitted', m.find(x=>x.id==='crypto').coins.length === 1);
 
-/* The names in /guide/ are the ones the owner will actually type into Netlify.
+/* The names in netlify/OWNER-SETUP.md are the ones the owner will actually type into Netlify.
    If the code and the documentation disagree the payment screen comes up empty
    and nothing says why, so both spellings are pinned here. */
 for (const k of Object.keys(process.env)) {

@@ -139,8 +139,8 @@ export function priceOrder(items) {
    offered. If NOTHING is configured the caller refuses the order: taking money-less
    orders leaves the buyer with no way to pay and the owner with phantom rows.
 
-   Variable names follow /guide/ ("Environment variables") so the documentation on
-   the site and the code agree. The shorter aliases are accepted too, because the
+   Variable names follow netlify/OWNER-SETUP.md so the documentation and the
+   code agree. The shorter aliases are accepted too, because the
    cost of a silent typo here is an order screen with no way to pay on it. */
 const env = (...names) => {
   for (const n of names) {
