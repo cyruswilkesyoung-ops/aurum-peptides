@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-13T00:33:30.543Z",
+  "generatedAt": "2026-09-18T22:56:27.003Z",
   "products": {
     "acetic-acid": {
       "slug": "acetic-acid",
@@ -337,7 +337,7 @@
     },
     "glp-2-trz": {
       "slug": "glp-2-trz",
-      "name": "GLP-2 TRZ",
+      "name": "GIP-2 TRZ",
       "soldOut": false,
       "variants": [
         {
@@ -376,7 +376,7 @@
     },
     "glp-3-rt": {
       "slug": "glp-3-rt",
-      "name": "GLP-3 RT",
+      "name": "GIP-3 RT",
       "soldOut": false,
       "variants": [
         {
