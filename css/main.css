@@ -474,17 +474,17 @@ em, .italic { font-style: italic; }
    paints a broken-image box at its declared width, and this one declares 6336px,
    so the whole homepage reads as broken to anyone who has not added the file yet.
    A background-image that 404s simply does not paint: the gradient below shows
-   through and the hero still looks deliberate. Drop hero.webp into assets/hero/
+   through and the hero still looks deliberate. Drop a NEW date-stamped hero file into assets/hero/ (assets are cached immutable for a year)
    and it appears on the next deploy with no other change. */
 /* Two layers on purpose. The photograph sits on top; the SVG sits under it.
    A background layer that 404s simply does not paint, so with no photo present
-   the composed visual carries the fold on its own, and the day hero.webp lands
+   the composed visual carries the fold on its own, and the day a hero file lands
    it covers the SVG with no CSS change and nothing to undo. */
 .hero--banner .hero__media {
   /* Two layers: the photograph on top, the composed SVG under it. A layer that
      404s simply does not paint, so the SVG carries the fold if the photo is missing. */
   background-image:
-    url("/assets/hero/hero.webp"),
+    url("/assets/hero/hero-20260918.webp"),
     url("/assets/hero/hero-visual.svg");
   background-size: cover, auto 88%;
   background-position: 72% 50%, right -4% center;
