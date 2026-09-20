@@ -502,27 +502,71 @@ em, .italic { font-style: italic; }
   padding-block: clamp(3rem, 8vw, 5.5rem);
 }
 @media (max-width: 940px) {
-  /* A narrow viewport crops the frame to almost nothing, so the scrim goes
-     near-solid and the photograph becomes atmosphere behind the type rather
-     than a subject beside it. */
-  .hero--banner { min-height: auto; }
+  /* Type over the photograph is a desktop luxury: the composition reserves the left
+     half of a 21:9 frame for words, and a phone crops that half away. Keeping the
+     overlay anyway cost the picture — the frame ran at opacity .34 under a near-solid
+     scrim, so the vials were atmosphere rather than a subject.
+     Here the two jobs get separate rooms instead of one they have to share. The
+     photograph keeps a full-strength band across the top, cropped to the vials; the
+     copy sits below it on the section's own near-black ground with nothing behind the
+     type at all. That leaves the scrim one job: blending the seam between the two. */
+  .hero--banner {
+    /* Tall enough that the vials read at 390px, then capped three ways so the band
+       never takes the whole fold: in vw for narrow screens, in vh so a short viewport
+       (a small phone, or any phone in landscape) still opens on the headline as well
+       as the picture, and in rem so a tablet does not scale it up without limit. vh
+       rather than dvh on purpose — dvh would re-crop the photograph on every scroll
+       as the browser toolbar collapses. */
+    --hero-band: clamp(9.5rem, min(74vw, 42vh), 20rem);
+    min-height: auto;
+    display: block;
+  }
   .hero--banner .hero__media {
-    background-position: 78% 50%, 78% 50%, right -30% bottom -6%;
-    background-size: cover, cover, auto 62%;
-    opacity: .34;
+    inset: 0 0 auto;
+    height: var(--hero-band);
+    opacity: 1;
+    /* `cover` on a band this tall scales the frame to its height and drops the empty
+       left third — the part the desktop composition set aside for type. Anchored right
+       of centre and high, which holds the front vial and its neighbour in shot and
+       keeps the gold caps clear of the top edge where a wider screen crops vertically. */
+    background-size: cover, contain;
+    background-position: 82% 22%, center;
+    /* The 2688px master is ~208 KB to fill a band a few hundred pixels wide. The Image
+       CDN resizes at the edge and negotiates AVIF/WebP off the Accept header. The URL
+       is duplicated in a preload in index.html; a new date-stamped hero has to update
+       both. The SVG underneath stays the layer that carries the fold if neither loads. */
+    background-image:
+      url("/.netlify/images?url=/assets/hero/hero-20260918.webp&w=1200&q=78"),
+      url("/assets/hero/hero-visual.svg");
   }
   .hero--banner .hero__scrim {
-    background:
-      linear-gradient(90deg, var(--paper) 0%, rgba(10,10,10,0.93) 46%, rgba(10,10,10,0.72) 100%),
-      linear-gradient(0deg, rgba(10,10,10,0.78) 0%, rgba(10,10,10,0.25) 55%);
+    inset: 0 0 auto;
+    height: var(--hero-band);
+    /* Vertical now, not horizontal. Shade under the sticky header so the nav stays
+       legible over the gold, clear through the middle where the vials are, then down
+       into --paper so the band ends on the exact colour the copy starts on and the
+       seam reads as a fade rather than an edge. */
+    background: linear-gradient(180deg,
+      rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.12) 22%, rgba(10,10,10,0) 48%,
+      rgba(10,10,10,0.5) 84%, var(--paper) 100%);
   }
-  .hero--banner .hero__copy { max-width: none; }
+  /* The copy is in normal flow beneath an absolutely positioned band, so it has to be
+     pushed past it by hand. */
+  .hero--banner .hero__inner { padding-top: var(--hero-band); }
+  .hero--banner .hero__copy {
+    max-width: none;
+    padding-block: clamp(1.5rem, 6vw, 2.4rem) clamp(2.25rem, 8vw, 3.25rem);
+  }
   /* The ribbon is absolute against the hero. On a phone the copy grows tall enough that
      bottom:4% lands on top of the last stat, so here it returns to the flow instead. */
   .hero--banner .ruo-ribbon {
     position: static;
     display: inline-block;
     margin-top: 1.4rem;
+    /* The <=620px rule below centres the ribbon with right:50% + translateX(50%),
+       which only lands where it is absolute. In the flow the offset does nothing and
+       the transform alone shoves it half its own width off the right edge. */
+    transform: none;
   }
 }
 /* Pre-existing, not introduced by the banner: .tagline-bar is an inline-flex row with

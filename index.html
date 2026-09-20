@@ -33,6 +33,15 @@
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cinzel:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap"></noscript>
   <script src="/js/age-gate.js?v=20260913"></script>
   <link rel="stylesheet" href="/css/main.css?v=20260913">
+  <!-- The banner photograph is the largest thing above the fold and it is a CSS
+       background, so it is not discoverable until main.css has parsed. On a phone it is
+       now shown at full strength, so it is worth fetching in parallel with the
+       stylesheet. Both URLs must match css/main.css exactly, or this preloads a third
+       image instead of the one the page paints. -->
+  <link rel="preload" as="image" fetchpriority="high" media="(max-width: 940px)"
+        href="/.netlify/images?url=/assets/hero/hero-20260918.webp&amp;w=1200&amp;q=78">
+  <link rel="preload" as="image" fetchpriority="high" media="(min-width: 941px)"
+        href="/assets/hero/hero-20260918.webp">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Aurum Peptides","alternateName":"Aurum","url":"https://aurum-peptides.netlify.app/","logo":"https://aurum-peptides.netlify.app/assets/favicon.png","email":"support@aurumpeptides.com","telephone":"+1 (949) 795-2085","foundingDate":"2023","address":{"@type":"PostalAddress","addressLocality":"Costa Mesa","addressRegion":"CA","addressCountry":"US"},"slogan":"Research | Precision | Performance"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Aurum Peptides","url":"https://aurum-peptides.netlify.app/","potentialAction":{"@type":"SearchAction","target":"https://aurum-peptides.netlify.app/shop/?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
 </head>
