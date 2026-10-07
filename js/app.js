@@ -1,4 +1,4 @@
-/* Aurum Peptides — interaction layer. Vanilla, dependency-free, deferred.
+/* auraa — interaction layer. Vanilla, dependency-free, deferred.
    Everything degrades gracefully without JS: content and links work, the cart
    is an enhancement, and reveals fall back to visible in CSS (see `.reveal` in
    main.css) rather than here — this file may never run. */
@@ -88,7 +88,7 @@
   /* ---- cart (localStorage) -------------------------------------------- */
   // v2 lines carry the identifiers the server needs to re-price the order
   // (slug / variant / bundleQty). Prices in the cart are display-only.
-  const CART_KEY = 'aurum.cart.v2';
+  const CART_KEY = 'auraa.cart.v2';
   const readCart = () => {
     try {
       return JSON.parse(localStorage.getItem(CART_KEY)) || [];
@@ -448,7 +448,7 @@
         if (!res.ok || !data.ok) throw new Error(data.error || 'We could not place this order.');
 
         // Hand the instructions to /order/ via sessionStorage — never the URL.
-        sessionStorage.setItem('aurum.lastOrder', JSON.stringify(data));
+        sessionStorage.setItem('auraa.lastOrder', JSON.stringify(data));
         cart = [];
         writeCart(cart);
         location.assign('/order/');
@@ -475,7 +475,7 @@
   function initOrder() {
     let data = null;
     try {
-      data = JSON.parse(sessionStorage.getItem('aurum.lastOrder'));
+      data = JSON.parse(sessionStorage.getItem('auraa.lastOrder'));
     } catch {
       data = null;
     }
@@ -597,7 +597,7 @@
   if (adminGate) initAdmin();
 
   function initAdmin() {
-    const PASS_KEY = 'aurum.admin';
+    const PASS_KEY = 'auraa.admin';
     const panel = $('#adminPanel');
     const list = $('#adminList');
     const stats = $('#adminStats');

@@ -1,4 +1,4 @@
-# Aurum: owner setup and day-to-day orders
+# auraa: owner setup and day-to-day orders
 
 This file lives under `netlify/`, which the site never serves. It replaces the
 "Environment variables" and "Confirming an order" sections of the old public

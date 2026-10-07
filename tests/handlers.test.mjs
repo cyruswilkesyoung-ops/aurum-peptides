@@ -42,7 +42,7 @@ ok('503 when no payment method configured', r.status === 503 && j.ok === false, 
 ok('  nothing was persisted', mem.size === 0, mem.size);
 
 process.env.CRYPTO_BTC = 'bc1qexampleaddress';
-process.env.CASHAPP_HANDLE = 'aurum';
+process.env.CASHAPP_HANDLE = 'auraa';
 process.env.ADMIN_PASSWORD = 'test-password';
 
 resetLimits();

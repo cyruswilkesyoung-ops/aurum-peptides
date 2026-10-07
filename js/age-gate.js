@@ -1,4 +1,4 @@
-/* Aurum Peptides — entry gate.
+/* auraa — entry gate.
    ---------------------------------------------------------------------------
    Loaded SYNCHRONOUSLY from <head>, before the stylesheet paints anything, so
    the storefront never flashes behind the gate.
@@ -54,7 +54,7 @@
     gate.setAttribute('aria-labelledby', 'ageGateTitle');
     gate.innerHTML = [
       '<div class="agegate__inner">',
-      '  <p class="agegate__mark"><span>Aurum</span><b>Peptides</b></p>',
+      '  <p class="agegate__mark"><img src="/assets/auraa-logo-20261006.png" alt="auraa" width="505" height="132"></p>',
       '  <span class="agegate__rule" aria-hidden="true"></span>',
       '  <h1 class="agegate__title" id="ageGateTitle">For laboratory research use only.</h1>',
       '  <p class="agegate__lead">Everything sold here is a research compound. Nothing on this site is a drug, a supplement, or fit for human or veterinary consumption. You must be 21 or older to continue.</p>',
@@ -68,7 +68,7 @@
 
     var declined =
       '<div class="agegate__inner">' +
-      '  <p class="agegate__mark"><span>Aurum</span><b>Peptides</b></p>' +
+      '  <p class="agegate__mark"><img src="/assets/auraa-logo-20261006.png" alt="auraa" width="505" height="132"></p>' +
       '  <span class="agegate__rule" aria-hidden="true"></span>' +
       '  <h1 class="agegate__title">You can’t continue.</h1>' +
       '  <p class="agegate__lead">This catalogue is restricted to researchers aged 21 and over. Thanks for stopping by.</p>' +

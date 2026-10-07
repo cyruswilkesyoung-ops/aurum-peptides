@@ -2,7 +2,7 @@
   "name": "aurum-peptides",
   "private": true,
   "type": "module",
-  "description": "Aurum Peptides storefront \u2014 static site plus Netlify Functions for the order flow.",
+  "description": "auraa storefront \u2014 static site plus Netlify Functions for the order flow.",
   "scripts": {
     "build": "node scripts/build-catalog.mjs",
     "dev": "netlify dev",
