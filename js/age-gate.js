@@ -17,7 +17,7 @@
 (() => {
   'use strict';
 
-  var KEY = 'auraa.entry.v1';
+  var KEY = 'aurum.entry.v1';
   var REMEMBER_DAYS = 30;
   var root = document.documentElement;
 

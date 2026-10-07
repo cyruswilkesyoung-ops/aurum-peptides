@@ -178,7 +178,7 @@ export function paymentMethods() {
   if (handle) {
     methods.push({
       id: 'cashapp', label: 'Cash App',
-      name: env('CASHAPP_NAME') || 'auraa',
+      name: env('CASHAPP_NAME') || 'Aurum Peptides',
       handle: handle.startsWith('$') ? handle : '$' + handle,
       qr: '',
     });
@@ -189,7 +189,7 @@ export function paymentMethods() {
   if (zelle) {
     methods.push({
       id: 'zelle', label: 'Zelle',
-      name: env('ZELLE_NAME') || 'auraa',
+      name: env('ZELLE_NAME') || 'Aurum Peptides',
       handle: zelle,
       qr: '',
     });
