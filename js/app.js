@@ -312,24 +312,6 @@
     );
   }
 
-  /* ---- reconstitution calculator -------------------------------------- */
-  const calc = $('#calc');
-  if (calc) {
-    const massEl = $('#calcMass');
-    const volEl = $('#calcVol');
-    const conc = $('#calcConc');
-    const ugul = $('#calcUgUl');
-    const run = () => {
-      const m = parseFloat(massEl.value) || 0;
-      const v = parseFloat(volEl.value) || 0;
-      const c = v > 0 ? m / v : 0;
-      conc.textContent = c.toFixed(2);
-      ugul.textContent = c.toFixed(2); // mg/mL === µg/µL
-    };
-    massEl.addEventListener('input', run);
-    volEl.addEventListener('input', run);
-    run();
-  }
 
   /* ---- toast ----------------------------------------------------------- */
   let toastTimer;
