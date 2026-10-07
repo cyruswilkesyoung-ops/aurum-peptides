@@ -1,6 +1,6 @@
 {
-  "name": "Aurum Peptides — Research Peptides",
-  "short_name": "Aurum",
+  "name": "auraa — Research Peptides",
+  "short_name": "auraa",
   "description": "US-based research peptides verified to ≥99% purity, with a batch COA on every vial. Research | Precision | Performance. For laboratory research use only.",
   "start_url": "/",
   "display": "standalone",
@@ -8,17 +8,12 @@
   "theme_color": "#0a0a0a",
   "icons": [
     {
-      "src": "/assets/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
-    },
-    {
-      "src": "/assets/favicon.png",
+      "src": "/assets/favicon-20261006.png",
       "sizes": "96x96",
       "type": "image/png"
     },
     {
-      "src": "/assets/apple-touch-icon.png",
+      "src": "/assets/apple-touch-icon-20261006.png",
       "sizes": "180x180",
       "type": "image/png"
     }

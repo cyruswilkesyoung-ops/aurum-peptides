@@ -65,10 +65,10 @@ ok('price fields in the payload are not read', evil.total === 59.94, evil.total)
 console.log('\nPAYMENT METHODS');
 ok('none configured -> empty (caller refuses order)', paymentMethods().length === 0);
 process.env.CRYPTO_BTC = 'bc1qexample';
-process.env.CASHAPP_HANDLE = 'aurum';
+process.env.CASHAPP_HANDLE = 'auraa';
 const m = paymentMethods();
 ok('crypto appears when an address is set', m.some(x => x.id==='crypto' && x.coins[0].code==='BTC'));
-ok('cashapp handle gets its $ prefix', m.find(x=>x.id==='cashapp')?.handle === '$aurum');
+ok('cashapp handle gets its $ prefix', m.find(x=>x.id==='cashapp')?.handle === '$auraa');
 ok('unset coins are omitted', m.find(x=>x.id==='crypto').coins.length === 1);
 
 /* The names in netlify/OWNER-SETUP.md are the ones the owner will actually type into Netlify.
@@ -80,20 +80,20 @@ for (const k of Object.keys(process.env)) {
 process.env.CRYPTO_BTC_ADDRESS  = 'bc1qdocumented';
 process.env.CRYPTO_USDT_ADDRESS = 'TdocumentedUSDT';
 process.env.CRYPTO_USDT_NETWORK = 'ERC-20';
-process.env.CASHAPP_CASHTAG     = '$aurum';
+process.env.CASHAPP_CASHTAG     = '$auraa';
 process.env.ZELLE_CONTACT       = 'pay@aurumpeptides.com';
-process.env.ZELLE_NAME          = 'Aurum Labs LLC';
+process.env.ZELLE_NAME          = 'auraa Labs LLC';
 const d = paymentMethods();
 const dc = d.find(x => x.id === 'crypto').coins;
 ok('documented CRYPTO_*_ADDRESS names are read', dc.find(c=>c.code==='BTC')?.address === 'bc1qdocumented');
 ok('CRYPTO_USDT_NETWORK overrides the TRC-20 default',
    dc.find(c=>c.code==='USDT')?.network === 'ERC-20');
 ok('documented CASHAPP_CASHTAG is read, $ not doubled',
-   d.find(x=>x.id==='cashapp')?.handle === '$aurum');
+   d.find(x=>x.id==='cashapp')?.handle === '$auraa');
 ok('zelle is offered when ZELLE_CONTACT is set',
    d.find(x=>x.id==='zelle')?.handle === 'pay@aurumpeptides.com');
 ok('zelle carries the display name the UI renders',
-   d.find(x=>x.id==='zelle')?.name === 'Aurum Labs LLC');
+   d.find(x=>x.id==='zelle')?.name === 'auraa Labs LLC');
 
 /* Every id here has a branch in js/app.js renderMethod(); an id it does not know
    would silently render as a Zelle panel. */

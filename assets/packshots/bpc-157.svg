@@ -1,4 +1,4 @@
-<svg width="340" height="460" viewBox="0 0 340 460" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BPC-157 research vial packshot — clear glass vial with visible lyophilized powder, gold cap and white Aurum label">
+<svg width="340" height="460" viewBox="0 0 340 460" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BPC-157 research vial packshot — clear glass vial with visible lyophilized powder, gold cap and white auraa label">
   <defs>
     <clipPath id="glassbpc157"><rect x="108" y="92" width="124" height="312" rx="14"/></clipPath>
     <!-- clear glass: cylindrical shading built from translucent whites -->
@@ -83,7 +83,7 @@
   <rect x="104" y="196" width="132" height="150" rx="7" fill="none" stroke="#000000" stroke-opacity="0.14" stroke-width="0.6"/>
   <rect x="109" y="201" width="122" height="140" rx="4.5" fill="none" stroke="url(#framebpc157)" stroke-width="1"/>
   <!-- label content : dark charcoal on white -->
-  <text x="170" y="220" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="9.5" letter-spacing="4.2" fill="#1A1A1A">AURUM</text>
+  <text x="170" y="220" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="9.5" letter-spacing="1.6" fill="#1A1A1A">auraa</text>
   <line x1="130" y1="227.5" x2="210" y2="227.5" stroke="#C9A84C" stroke-width="0.8"/>
   <text x="170" y="259" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="21" font-weight="bold" fill="#111111">BPC-157</text>
   <text x="170" y="278" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="7.6" letter-spacing="1" fill="#4A4741">CAS 137525-51-0</text>

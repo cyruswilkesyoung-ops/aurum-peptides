@@ -1,5 +1,5 @@
 /* =========================================================================
-   AURUM PEPTIDES — design system
+   AURAA — design system
    True black + deep charcoal + refined metallic gold, used sparingly.
    High-end biotech meets luxury goods. Author: Claude Fable 5.
 
@@ -484,7 +484,7 @@ em, .italic { font-style: italic; }
   /* Two layers: the photograph on top, the composed SVG under it. A layer that
      404s simply does not paint, so the SVG carries the fold if the photo is missing. */
   background-image:
-    url("/assets/hero/hero-20260918.webp"),
+    url("/assets/hero/hero-20261006.webp"),
     url("/assets/hero/hero-visual.svg");
   background-size: cover, auto 88%;
   background-position: 72% 50%, right -4% center;
@@ -536,7 +536,7 @@ em, .italic { font-style: italic; }
        is duplicated in a preload in index.html; a new date-stamped hero has to update
        both. The SVG underneath stays the layer that carries the fold if neither loads. */
     background-image:
-      url("/.netlify/images?url=/assets/hero/hero-20260918.webp&w=1200&q=78"),
+      url("/.netlify/images?url=/assets/hero/hero-20261006.webp&w=1200&q=78"),
       url("/assets/hero/hero-visual.svg");
   }
   .hero--banner .hero__scrim {
@@ -1528,7 +1528,7 @@ html:not(.reveals-ready) .reveal { animation: reveal-failsafe 0.4s var(--ease-ou
 }
 
 /* =========================================================================
-   AURUM LAYER — dark-theme component overrides + gold enhancements.
+   AURAA LAYER — dark-theme component overrides + gold enhancements.
    Everything below intentionally wins the cascade over the base system.
    ========================================================================= */
 
@@ -1554,6 +1554,10 @@ body {
 /* ---- brand lockup ------------------------------------------------------ */
 .brand { gap: 0.75rem; }
 .brand__lockup { display: inline-flex; align-items: center; gap: 0.75rem; }
+.brand__logo { display: block; height: 40px; width: auto; }
+.footer__brand .brand__logo { height: 44px; }
+@media (max-width: 940px) { .brand__logo { height: 28px; } }
+@media (max-width: 420px) { .brand__logo { height: 24px; } }
 .brand__stack { display: flex; flex-direction: column; line-height: 1; gap: 0.28rem; }
 .brand__word {
   font-family: var(--f-brand);
@@ -1995,14 +1999,9 @@ html.gate-armed body > *:not(.agegate) { visibility: hidden; }
 .agegate__inner { max-width: 34rem; text-align: center; }
 
 .agegate__mark {
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 0.82rem;
-  letter-spacing: 0.42em;
-  text-indent: 0.42em;
-  text-transform: uppercase;
-  color: var(--ink-2);
   margin: 0;
 }
+.agegate__mark img { display: block; height: 46px; width: auto; margin: 0 auto; }
 .agegate__mark b { display: block; font-weight: 500; font-size: 0.62rem; color: var(--teal); }
 
 .agegate__rule {
