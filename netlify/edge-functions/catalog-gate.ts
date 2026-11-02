@@ -95,6 +95,10 @@ export const config: Config = {
     '/categories', '/categories/*',
     '/checkout', '/checkout/*',
     '/order', '/order/*',
+    // Certificates list every product by name, and blog posts carry product cards
+    // with prices, so both sit behind the same login (processor review, 2026-11-01).
+    '/certificates', '/certificates/*',
+    '/blog', '/blog/*',
     '/assets/packshots/*',
     '/api/orders',
   ],
