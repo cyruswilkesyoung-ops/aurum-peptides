@@ -2,13 +2,19 @@
   "name": "aurum-peptides",
   "private": true,
   "type": "module",
-  "description": "auraa storefront \u2014 static site plus Netlify Functions for the order flow.",
+  "description": "auraa storefront — static site plus Netlify Functions for the order flow.",
   "scripts": {
     "build": "node scripts/build-catalog.mjs",
     "dev": "netlify dev",
     "test": "node tests/pricing.test.mjs && node tests/handlers.test.mjs"
   },
   "dependencies": {
-    "@netlify/blobs": "^8.1.0"
+    "@netlify/blobs": "^8.1.0",
+    "@netlify/database": "^2.0.1",
+    "drizzle-orm": "^1.0.0-beta.22"
+  },
+  "devDependencies": {
+    "@netlify/edge-functions": "^4.0.3",
+    "drizzle-kit": "^1.0.0-beta.22"
   }
 }

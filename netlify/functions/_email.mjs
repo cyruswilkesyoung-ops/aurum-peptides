@@ -51,6 +51,10 @@ async function send({ to, subject, text }) {
   }
 }
 
+/* Generic transactional send for other modules (e.g. password resets). Same
+   rules as above: never throws, resolves false when unconfigured or refused. */
+export const sendEmail = ({ to, subject, text }) => send({ to, subject, text });
+
 const money = (n) => `$${Number(n).toFixed(2)}`;
 
 const lines = (o) =>

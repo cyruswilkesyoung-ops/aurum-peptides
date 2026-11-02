@@ -23,10 +23,18 @@ const orders = (await import(BASE + 'orders.mjs')).default;
 const adminList = (await import(BASE + 'admin-orders.mjs')).default;
 const adminUpd = (await import(BASE + 'admin-orders-update.mjs')).default;
 
+// The catalog is account-gated, so /api/orders requires a customer session.
+// Tests sign one exactly the way auth.mts does.
+process.env.AUTH_SESSION_SECRET = 'test-session-secret';
+const { signSession, SESSION_COOKIE } = await import(BASE + '_session.mjs');
+const SESSION = {
+  cookie: `${SESSION_COOKIE}=${encodeURIComponent(signSession({ id: 1, email: 'lab@example.com', name: 'A Researcher' }))}`,
+};
+
 let pass = 0, fail = 0;
 const ok = (n, c, d='') => { c ? (pass++, console.log('  ✓', n)) : (fail++, console.log('  ✗', n, d)); };
 const post = (h, body, headers={}) => h(new Request('https://x/api', {
-  method:'POST', headers:{ 'content-type':'application/json', ...headers }, body: JSON.stringify(body) }));
+  method:'POST', headers:{ 'content-type':'application/json', ...SESSION, ...headers }, body: JSON.stringify(body) }));
 
 const good = {
   name:'A Researcher', email:'lab@example.com', address1:'1 Test St', city:'Austin',
@@ -36,7 +44,11 @@ const good = {
 };
 
 console.log('\nORDERS — refuses before writing when it cannot be paid');
-delete process.env.CRYPTO_BTC; delete process.env.CASHAPP_HANDLE;
+// The build/dev environment can carry the site's real payment variables; this
+// test needs the genuinely unconfigured state.
+for (const n of ['CRYPTO_BTC_ADDRESS','CRYPTO_BTC','CRYPTO_ETH_ADDRESS','CRYPTO_ETH',
+  'CRYPTO_USDT_ADDRESS','CRYPTO_USDT_TRC20','CRYPTO_USDC_ADDRESS','CRYPTO_USDC_ERC20',
+  'CASHAPP_CASHTAG','CASHAPP_HANDLE','ZELLE_CONTACT']) delete process.env[n];
 let r = await post(orders, good); let j = await r.json();
 ok('503 when no payment method configured', r.status === 503 && j.ok === false, r.status);
 ok('  nothing was persisted', mem.size === 0, mem.size);
@@ -44,6 +56,14 @@ ok('  nothing was persisted', mem.size === 0, mem.size);
 process.env.CRYPTO_BTC = 'bc1qexampleaddress';
 process.env.CASHAPP_HANDLE = 'auraa';
 process.env.ADMIN_PASSWORD = 'test-password';
+
+resetLimits();
+console.log('\nORDERS — account gate');
+r = await post(orders, good, { cookie: '' }); j = await r.json();
+ok('no session -> 401', r.status === 401 && j.ok === false, r.status);
+r = await post(orders, good, { cookie: `${SESSION_COOKIE}=tampered.token` }); j = await r.json();
+ok('bad session -> 401', r.status === 401 && j.ok === false, r.status);
+ok('  nothing was persisted', mem.size === 0, mem.size);
 
 resetLimits();
 console.log('\nORDERS — validation');

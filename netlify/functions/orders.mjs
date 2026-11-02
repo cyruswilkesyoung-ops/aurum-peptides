@@ -6,9 +6,16 @@
 import { json, fail, priceOrder, paymentMethods, orderStore, newRef, fmtUSD, rateLimit, clientIp }
   from './_lib.mjs';
 import { notifyOwner, emailConfigured } from './_email.mjs';
+import { readSession } from './_session.mjs';
 
 export default async (req) => {
   if (req.method !== 'POST') return fail('Method not allowed.', 405);
+
+  // The edge gate already turns anonymous requests away at /api/orders, but this
+  // function is also reachable at its /.netlify/functions/ address, so the session
+  // is re-verified here. The catalog is account-gated; so is ordering from it.
+  const session = readSession(req);
+  if (!session) return fail('Please sign in to place an order.', 401);
 
   // Before parsing anything: a script looping on this endpoint fills the order store,
   // and the admin list reads every order on every load, so spam degrades the panel too.

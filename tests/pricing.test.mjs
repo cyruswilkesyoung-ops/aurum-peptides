@@ -63,6 +63,11 @@ const evil = priceOrder([{ slug:'bpc-157', variant:5, bundleQty:1, qty:1, price:
 ok('price fields in the payload are not read', evil.total === 59.94, evil.total);
 
 console.log('\nPAYMENT METHODS');
+// The build/dev environment can carry the site's real payment variables;
+// this block tests the unconfigured state, so clear them all first.
+for (const n of ['CRYPTO_BTC_ADDRESS','CRYPTO_BTC','CRYPTO_ETH_ADDRESS','CRYPTO_ETH',
+  'CRYPTO_USDT_ADDRESS','CRYPTO_USDT_TRC20','CRYPTO_USDC_ADDRESS','CRYPTO_USDC_ERC20',
+  'CASHAPP_CASHTAG','CASHAPP_HANDLE','ZELLE_CONTACT']) delete process.env[n];
 ok('none configured -> empty (caller refuses order)', paymentMethods().length === 0);
 process.env.CRYPTO_BTC = 'bc1qexample';
 process.env.CASHAPP_HANDLE = 'auraa';

@@ -426,6 +426,11 @@
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify(payload),
         });
+        if (res.status === 401) {
+          // Session expired mid-checkout: sign back in, then return here.
+          location.assign('/account/login/?next=%2Fcheckout%2F');
+          return;
+        }
         const data = await res.json();
         if (!res.ok || !data.ok) throw new Error(data.error || 'We could not place this order.');
 
