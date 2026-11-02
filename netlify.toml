@@ -54,6 +54,20 @@
   status = 404
   force = true
 
+# Database schema/client source and the drizzle config are build-time files,
+# not site content. Same treatment as /netlify/* above.
+[[redirects]]
+  from = "/db/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/drizzle.config.ts"
+  to = "/404.html"
+  status = 404
+  force = true
+
 # publish = "." means the repo root is the deployed site, so everything Netlify
 # installs during the build ships with it. node_modules is thousands of files
 # including dependencies' own HTML docs pages, which have no business being
@@ -93,6 +107,35 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# ---- gated catalog -------------------------------------------------------------
+# The edge function netlify/edge-functions/catalog-gate.ts is the real gate (it also
+# sets noindex/no-store on everything it serves). These headers are a backstop for
+# any path the gate passes through, and they noindex the account pages.
+[[headers]]
+  for = "/shop/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "private, no-store"
+
+[[headers]]
+  for = "/categories/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "private, no-store"
+
+[[headers]]
+  for = "/account/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    Cache-Control = "no-store"
+
+# Packshots are product imagery, which is account-gated; they must not sit in a
+# shared or long-lived cache the way the rest of /assets/* (below) is allowed to.
+[[headers]]
+  for = "/assets/packshots/*"
+  [headers.values]
+    Cache-Control = "private, no-store"
 
 [[headers]]
   for = "/checkout/*"

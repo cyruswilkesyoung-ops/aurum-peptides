@@ -49,3 +49,17 @@ Wording on the payment screen:
 4. When it ships, paste the tracking number and press Save & ship. The buyer
    gets the tracking email.
 5. If a payment never arrives, Cancel records it and notifies nobody.
+
+## Customer accounts (added November 2026)
+
+The catalog, prices, cart and checkout now require a customer account; the gate
+is enforced server-side by `netlify/edge-functions/catalog-gate.ts`, and accounts
+live in Netlify Database (`users` table). Signup is instant — no approval step
+and no email-confirmation block, which the payment processor's reviewer relies on.
+
+- `AUTH_SESSION_SECRET` (recommended): any long random string. Signs the session
+  cookie. Until you set it, a key derived from `ADMIN_PASSWORD` is used so
+  accounts work out of the box — but note that changing `ADMIN_PASSWORD` then
+  logs every customer out. Set the dedicated secret to decouple the two:
+  `netlify env:set AUTH_SESSION_SECRET "$(openssl rand -hex 32)"` and redeploy.
+- Password-reset emails use the existing `RESEND_API_KEY` / `EMAIL_FROM`.
