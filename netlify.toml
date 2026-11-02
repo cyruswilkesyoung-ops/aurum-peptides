@@ -125,6 +125,18 @@
     Cache-Control = "private, no-store"
 
 [[headers]]
+  for = "/certificates/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "private, no-store"
+
+[[headers]]
+  for = "/blog/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "private, no-store"
+
+[[headers]]
   for = "/account/*"
   [headers.values]
     X-Robots-Tag = "noindex"
