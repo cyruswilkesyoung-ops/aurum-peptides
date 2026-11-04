@@ -488,7 +488,7 @@ em, .italic { font-style: italic; }
   /* Two layers: the photograph on top, the composed SVG under it. A layer that
      404s simply does not paint, so the SVG carries the fold if the photo is missing. */
   background-image:
-    url("/assets/hero/hero-20261023.webp"),
+    url("/assets/hero/hero-20261103.webp"),
     url("/assets/hero/hero-visual.svg");
   background-size: cover, auto 88%;
   background-position: 72% 50%, right -4% center;
@@ -540,7 +540,7 @@ em, .italic { font-style: italic; }
        is duplicated in a preload in index.html; a new date-stamped hero has to update
        both. The SVG underneath stays the layer that carries the fold if neither loads. */
     background-image:
-      url("/.netlify/images?url=/assets/hero/hero-20261023.webp&w=1200&q=78"),
+      url("/.netlify/images?url=/assets/hero/hero-20261103.webp&w=1200&q=78"),
       url("/assets/hero/hero-visual.svg");
   }
   .hero--banner .hero__scrim {

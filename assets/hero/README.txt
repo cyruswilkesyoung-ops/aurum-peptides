@@ -1,6 +1,6 @@
 HERO BANNER
 
-Current file: assets/hero/hero-20260918.webp (2688 x 1520, WebP), referenced from css/main.css.
+Current file: assets/hero/hero-20261103.webp (2688 x 1520, WebP), referenced from css/main.css.
 
 Everything under /assets/ is served with Cache-Control: immutable, max-age = 1 year
 (netlify.toml). A browser that has seen a file keeps it for a year. So a replacement
