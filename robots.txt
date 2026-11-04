@@ -8,4 +8,4 @@ Disallow: /account/
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://aurum-peptides.netlify.app/sitemap.xml
+Sitemap: https://pureauraa.com/sitemap.xml
