@@ -1,0 +1,318 @@
+{
+  "generatedAt": "2026-11-04T09:31:19.865Z",
+  "storeId": "store_c51c1ed39eda",
+  "products": {
+    "acetic-acid": {
+      "productId": "product_4e2b91dbe808",
+      "name": "Acetic Acid 0.6% — 10 Pack",
+      "variants": {
+        "3 mL ×10": {
+          "variantId": "variant_3007a2a30c35",
+          "label": "3 mL ×10",
+          "sku": "acetic-acid-3-ml-10",
+          "priceCentsUSD": 2999
+        }
+      }
+    },
+    "ahk-cu": {
+      "productId": "product_b45a8d046232",
+      "name": "AHK-Cu",
+      "variants": {
+        "50": {
+          "variantId": "variant_a24f33df29e0",
+          "label": "50 mg",
+          "sku": "ahk-cu-50",
+          "priceCentsUSD": 6999
+        }
+      }
+    },
+    "bac-water-10ml": {
+      "productId": "product_9ca9820209fc",
+      "name": "Bacteriostatic Water 10 mL",
+      "variants": {
+        "10 mL": {
+          "variantId": "variant_de7c63f7a661",
+          "label": "10 mL",
+          "sku": "bac-water-10ml-10-ml",
+          "priceCentsUSD": 1000
+        }
+      }
+    },
+    "bac-water-30ml": {
+      "productId": "product_144291bcc1c3",
+      "name": "Bacteriostatic Water 30 mL",
+      "variants": {
+        "30 mL": {
+          "variantId": "variant_dd142ecf5615",
+          "label": "30 mL",
+          "sku": "bac-water-30ml-30-ml",
+          "priceCentsUSD": 1999
+        }
+      }
+    },
+    "bpc-157": {
+      "productId": "product_c57969ccfd0d",
+      "name": "BPC-157",
+      "variants": {
+        "5": {
+          "variantId": "variant_4122454e775d",
+          "label": "5 mg",
+          "sku": "bpc-157-5",
+          "priceCentsUSD": 4999
+        },
+        "10": {
+          "variantId": "variant_5b6ea4c43760",
+          "label": "10 mg",
+          "sku": "bpc-157-10",
+          "priceCentsUSD": 7999
+        }
+      }
+    },
+    "cjc-1295-dac": {
+      "productId": "product_503127a34f63",
+      "name": "CJC-1295 w/DAC",
+      "variants": {
+        "5": {
+          "variantId": "variant_3db872e16968",
+          "label": "5 mg",
+          "sku": "cjc-1295-dac-5",
+          "priceCentsUSD": 6499
+        }
+      }
+    },
+    "cjc-1295-no-dac": {
+      "productId": "product_7a491034f21b",
+      "name": "CJC-1295 No DAC",
+      "variants": {
+        "5": {
+          "variantId": "variant_8b44dcaabdd4",
+          "label": "5 mg",
+          "sku": "cjc-1295-no-dac-5",
+          "priceCentsUSD": 5499
+        }
+      }
+    },
+    "dsip": {
+      "productId": "product_dbb0906f2e47",
+      "name": "DSIP",
+      "variants": {
+        "5": {
+          "variantId": "variant_8a0f3979b332",
+          "label": "5 mg",
+          "sku": "dsip-5",
+          "priceCentsUSD": 4999
+        }
+      }
+    },
+    "epithalon": {
+      "productId": "product_e29da1e66a24",
+      "name": "Epithalon",
+      "variants": {
+        "10": {
+          "variantId": "variant_b2f846c9c106",
+          "label": "10 mg",
+          "sku": "epithalon-10",
+          "priceCentsUSD": 4499
+        },
+        "50": {
+          "variantId": "variant_b51c904d33aa",
+          "label": "50 mg",
+          "sku": "epithalon-50",
+          "priceCentsUSD": 8999
+        }
+      }
+    },
+    "ghk-cu": {
+      "productId": "product_3869a671cebf",
+      "name": "GHK-Cu",
+      "variants": {
+        "50": {
+          "variantId": "variant_c0cfb31904ca",
+          "label": "50 mg",
+          "sku": "ghk-cu-50",
+          "priceCentsUSD": 4999
+        },
+        "100": {
+          "variantId": "variant_c116de119630",
+          "label": "100 mg",
+          "sku": "ghk-cu-100",
+          "priceCentsUSD": 6999
+        }
+      }
+    },
+    "glow": {
+      "productId": "product_480a2e970ee5",
+      "name": "GLOW-70",
+      "variants": {
+        "70": {
+          "variantId": "variant_7652e9edd547",
+          "label": "70 mg",
+          "sku": "glow-70",
+          "priceCentsUSD": 11900
+        }
+      }
+    },
+    "glp-2-trz": {
+      "productId": "product_db6c1938fb27",
+      "name": "GIP-2 TRZ",
+      "variants": {
+        "10": {
+          "variantId": "variant_dce59456e27f",
+          "label": "10 mg",
+          "sku": "glp-2-trz-10",
+          "priceCentsUSD": 6999
+        },
+        "30": {
+          "variantId": "variant_61095e6397ab",
+          "label": "30 mg",
+          "sku": "glp-2-trz-30",
+          "priceCentsUSD": 17999
+        },
+        "60": {
+          "variantId": "variant_9ff0557be854",
+          "label": "60 mg",
+          "sku": "glp-2-trz-60",
+          "priceCentsUSD": 30999
+        }
+      }
+    },
+    "glp-3-rt": {
+      "productId": "product_535287319fb1",
+      "name": "GIP-3 RT",
+      "variants": {
+        "10": {
+          "variantId": "variant_b3433e477446",
+          "label": "10 mg",
+          "sku": "glp-3-rt-10",
+          "priceCentsUSD": 6999
+        },
+        "30": {
+          "variantId": "variant_7216802274cf",
+          "label": "30 mg",
+          "sku": "glp-3-rt-30",
+          "priceCentsUSD": 16999
+        },
+        "60": {
+          "variantId": "variant_e49aec57d219",
+          "label": "60 mg",
+          "sku": "glp-3-rt-60",
+          "priceCentsUSD": 30000
+        }
+      }
+    },
+    "klow": {
+      "productId": "product_7ffd9e9b6af5",
+      "name": "KLOW",
+      "variants": {
+        "80": {
+          "variantId": "variant_b334fe435185",
+          "label": "80 mg",
+          "sku": "klow-80",
+          "priceCentsUSD": 12000
+        }
+      }
+    },
+    "mots-c": {
+      "productId": "product_bd38b9d250df",
+      "name": "MOTS-c",
+      "variants": {
+        "10": {
+          "variantId": "variant_40cb37798622",
+          "label": "10 mg",
+          "sku": "mots-c-10",
+          "priceCentsUSD": 4999
+        },
+        "30": {
+          "variantId": "variant_4118d9ac4eeb",
+          "label": "30 mg",
+          "sku": "mots-c-30",
+          "priceCentsUSD": 10999
+        },
+        "60": {
+          "variantId": "variant_c792307e8ebd",
+          "label": "60 mg",
+          "sku": "mots-c-60",
+          "priceCentsUSD": 15999
+        }
+      }
+    },
+    "nad": {
+      "productId": "product_f5b8c19d0972",
+      "name": "NAD+",
+      "variants": {
+        "100": {
+          "variantId": "variant_72b7fecab19b",
+          "label": "100 mg",
+          "sku": "nad-100",
+          "priceCentsUSD": 5999
+        },
+        "500": {
+          "variantId": "variant_310ad8853096",
+          "label": "500 mg",
+          "sku": "nad-500",
+          "priceCentsUSD": 9499
+        }
+      }
+    },
+    "tesamorelin": {
+      "productId": "product_d2395fde51f7",
+      "name": "Tesamorelin",
+      "variants": {
+        "5": {
+          "variantId": "variant_a0cb6fa53c05",
+          "label": "5 mg",
+          "sku": "tesamorelin-5",
+          "priceCentsUSD": 4999
+        },
+        "10": {
+          "variantId": "variant_509dd9e62207",
+          "label": "10 mg",
+          "sku": "tesamorelin-10",
+          "priceCentsUSD": 8999
+        },
+        "20": {
+          "variantId": "variant_f6e38121b24a",
+          "label": "20 mg",
+          "sku": "tesamorelin-20",
+          "priceCentsUSD": 13900
+        }
+      }
+    },
+    "thymosin-alpha-1": {
+      "productId": "product_dd5ae63d3553",
+      "name": "Thymosin Alpha-1",
+      "variants": {
+        "5": {
+          "variantId": "variant_a1cb1fcf0c24",
+          "label": "5 mg",
+          "sku": "thymosin-alpha-1-5",
+          "priceCentsUSD": 5000
+        },
+        "10": {
+          "variantId": "variant_43b69bda6648",
+          "label": "10 mg",
+          "sku": "thymosin-alpha-1-10",
+          "priceCentsUSD": 6999
+        }
+      }
+    },
+    "wolverine-blend": {
+      "productId": "product_a7ef879ee4ec",
+      "name": "Wolverine Blend",
+      "variants": {
+        "20": {
+          "variantId": "variant_215c788ea3df",
+          "label": "20 mg",
+          "sku": "wolverine-blend-20",
+          "priceCentsUSD": 7999
+        },
+        "40": {
+          "variantId": "variant_cfd6582d4bd6",
+          "label": "40 mg",
+          "sku": "wolverine-blend-40",
+          "priceCentsUSD": 11999
+        }
+      }
+    }
+  }
+}
