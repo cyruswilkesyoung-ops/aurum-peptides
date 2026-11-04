@@ -126,6 +126,6 @@ export default async (req) => {
     },
     methods,
     confirmWindow: process.env.ORDER_CONFIRM_WINDOW || '24 hours',
-    supportEmail: process.env.SUPPORT_EMAIL || 'support@aurumpeptides.com',
+    supportEmail: process.env.SUPPORT_EMAIL || 'support@pureauraa.com',
   });
 };
