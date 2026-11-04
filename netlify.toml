@@ -142,12 +142,14 @@
     X-Robots-Tag = "noindex"
     Cache-Control = "no-store"
 
-# Packshots are product imagery, which is account-gated; they must not sit in a
-# shared or long-lived cache the way the rest of /assets/* (below) is allowed to.
+# Packshots are publicly fetchable (the catalog gate no longer covers them) so
+# TagadaPay can load each variant's imageUrl. Photo sets live in dated
+# directories, so the files themselves never change in place — a day of shared
+# cache is safe, and a new shoot gets a new directory and new URLs.
 [[headers]]
   for = "/assets/packshots/*"
   [headers.values]
-    Cache-Control = "private, no-store"
+    Cache-Control = "public, max-age=86400"
 
 [[headers]]
   for = "/checkout/*"

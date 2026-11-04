@@ -99,7 +99,9 @@ export const config: Config = {
     // with prices, so both sit behind the same login (processor review, 2026-11-01).
     '/certificates', '/certificates/*',
     '/blog', '/blog/*',
-    '/assets/packshots/*',
+    // Packshots are deliberately NOT gated: TagadaPay stores each variant's
+    // imageUrl and must be able to fetch it without a customer session
+    // (owner decision, 2026-11-04). Product data and prices stay gated above.
     '/api/orders',
   ],
 };
