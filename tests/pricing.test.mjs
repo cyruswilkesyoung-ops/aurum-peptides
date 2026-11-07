@@ -1,7 +1,8 @@
-// Pricing engine, checked against the generated catalogue.
-// Run with: npm test
-import { priceOrder, paymentMethods, newRef, catalog, SHIP_FLAT, FREE_SHIP_OVER }
+// Pricing engine, checked against the generated catalogue and the TagadaPay
+// variant map. Run with: npm test
+import { priceOrder, newRef, catalog, SHIP_FLAT, FREE_SHIP_OVER }
   from '../netlify/functions/_lib.mjs';
+import { toTagadaItems } from '../netlify/functions/_tagada.mjs';
 
 let pass = 0, fail = 0;
 const ok = (name, cond, detail='') => { cond ? (pass++, console.log('  ✓', name)) : (fail++, console.log('  ✗', name, detail)); };
@@ -62,63 +63,52 @@ console.log('\nCLIENT-SUPPLIED PRICE IS IGNORED');
 const evil = priceOrder([{ slug:'bpc-157', variant:5, bundleQty:1, qty:1, price:0.01, lineTotal:0.01, unitPrice:0.01 }]);
 ok('price fields in the payload are not read', evil.total === 59.94, evil.total);
 
-console.log('\nPAYMENT METHODS');
-// The build/dev environment can carry the site's real payment variables;
-// this block tests the unconfigured state, so clear them all first.
-for (const n of ['CRYPTO_BTC_ADDRESS','CRYPTO_BTC','CRYPTO_ETH_ADDRESS','CRYPTO_ETH',
-  'CRYPTO_USDT_ADDRESS','CRYPTO_USDT_TRC20','CRYPTO_USDC_ADDRESS','CRYPTO_USDC_ERC20',
-  'CASHAPP_CASHTAG','CASHAPP_HANDLE','ZELLE_CONTACT']) delete process.env[n];
-ok('none configured -> empty (caller refuses order)', paymentMethods().length === 0);
-process.env.CRYPTO_BTC = 'bc1qexample';
-process.env.CASHAPP_HANDLE = 'auraa';
-const m = paymentMethods();
-ok('crypto appears when an address is set', m.some(x => x.id==='crypto' && x.coins[0].code==='BTC'));
-ok('cashapp handle gets its $ prefix', m.find(x=>x.id==='cashapp')?.handle === '$auraa');
-ok('unset coins are omitted', m.find(x=>x.id==='crypto').coins.length === 1);
-
-/* The names in netlify/OWNER-SETUP.md are the ones the owner will actually type into Netlify.
-   If the code and the documentation disagree the payment screen comes up empty
-   and nothing says why, so both spellings are pinned here. */
-for (const k of Object.keys(process.env)) {
-  if (/^(CRYPTO_|CASHAPP_|ZELLE_)/.test(k)) delete process.env[k];
+/* ===========================================================================
+   TAGADA MAP — TagadaPay charges ITS variant prices plus a computed discount,
+   so the charged total only equals the site's total if (a) every purchasable
+   variant is in the map, (b) its mapped price equals the site's single-vial
+   price to the cent, and (c) the discount math reproduces the bundle saving.
+   =========================================================================== */
+console.log('\nTAGADA MAP — every purchasable variant maps at the same price');
+let unmapped = 0, mispriced = 0, variants = 0;
+for (const p of Object.values(catalog)) {
+  if (p.soldOut) continue;
+  for (const v of p.variants) {
+    variants++;
+    let mapped;
+    try {
+      mapped = toTagadaItems(priceOrder([{ slug: p.slug, variant: v.mgKey, bundleQty: 1, qty: 1 }]).items);
+    } catch {
+      unmapped++; console.log(`    ! ${p.slug}/${v.mgKey} is not in _tagada-map.json`);
+      continue;
+    }
+    if (mapped.fullPriceCents !== Math.round(v.price * 100)) {
+      mispriced++; console.log(`    ! ${p.slug}/${v.mgKey}: site ${Math.round(v.price * 100)}¢ vs map ${mapped.fullPriceCents}¢`);
+    }
+  }
 }
-process.env.CRYPTO_BTC_ADDRESS  = 'bc1qdocumented';
-process.env.CRYPTO_USDT_ADDRESS = 'TdocumentedUSDT';
-process.env.CRYPTO_USDT_NETWORK = 'ERC-20';
-process.env.CASHAPP_CASHTAG     = '$auraa';
-process.env.ZELLE_CONTACT       = 'pay@aurumpeptides.com';
-process.env.ZELLE_NAME          = 'auraa Labs LLC';
-const d = paymentMethods();
-const dc = d.find(x => x.id === 'crypto').coins;
-ok('documented CRYPTO_*_ADDRESS names are read', dc.find(c=>c.code==='BTC')?.address === 'bc1qdocumented');
-ok('CRYPTO_USDT_NETWORK overrides the TRC-20 default',
-   dc.find(c=>c.code==='USDT')?.network === 'ERC-20');
-ok('documented CASHAPP_CASHTAG is read, $ not doubled',
-   d.find(x=>x.id==='cashapp')?.handle === '$auraa');
-ok('zelle is offered when ZELLE_CONTACT is set',
-   d.find(x=>x.id==='zelle')?.handle === 'pay@aurumpeptides.com');
-ok('zelle carries the display name the UI renders',
-   d.find(x=>x.id==='zelle')?.name === 'auraa Labs LLC');
+ok(`all ${variants} purchasable variants are mapped`, unmapped === 0, `${unmapped} unmapped`);
+ok('every mapped price matches the site price to the cent', mispriced === 0, `${mispriced} mismatches`);
 
-/* Every id here has a branch in js/app.js renderMethod(); an id it does not know
-   would silently render as a Zelle panel. */
-ok('every method id is one the order screen can render',
-   d.every(x => ['crypto','cashapp','zelle'].includes(x.id)));
+console.log('\nTAGADA MAP — bundle discount arithmetic');
+// Bundle of 3 BPC-157 10mg: TagadaPay full price 3 × 7999¢ = 23997¢;
+// site subtotal 21597¢; the one-off promotion must be worth exactly 2400¢.
+const t1 = toTagadaItems(r1.items);
+ok('bundle expands to one line of 3 units', t1.items.length === 1 && t1.items[0].quantity === 3, JSON.stringify(t1.items));
+ok('full price = 23997¢', t1.fullPriceCents === 23997, t1.fullPriceCents);
+ok('discount = full − site subtotal = 2400¢', t1.fullPriceCents - Math.round(r1.subtotal * 100) === 2400,
+   t1.fullPriceCents - Math.round(r1.subtotal * 100));
 
-delete process.env.CRYPTO_USDT_NETWORK;
-ok('USDT falls back to TRC-20 when no network is given',
-   paymentMethods().find(x=>x.id==='crypto').coins.find(c=>c.code==='USDT').network === 'TRC-20');
+// Same variant across two lines (single + bundle of 3) merges into 4 units.
+const merged = toTagadaItems(priceOrder([
+  { slug:'bpc-157', variant:10, bundleQty:1, qty:1 },
+  { slug:'bpc-157', variant:10, bundleQty:3, qty:1 },
+]).items);
+ok('same variant merges across lines', merged.items.length === 1 && merged.items[0].quantity === 4, JSON.stringify(merged.items));
 
-process.env.CRYPTO_ETH = '0xaliased';
-ok('the short alias still works alongside the documented name',
-   paymentMethods().find(x=>x.id==='crypto').coins.find(c=>c.code==='ETH')?.address === '0xaliased');
-
-process.env.CRYPTO_ETH_ADDRESS = '0xdocumented';
-ok('the documented name wins over the alias',
-   paymentMethods().find(x=>x.id==='crypto').coins.find(c=>c.code==='ETH')?.address === '0xdocumented');
-
-ok('whitespace-only values count as unset',
-   (process.env.ZELLE_CONTACT = '   ', paymentMethods().some(x=>x.id==='zelle') === false));
+// A no-bundle cart needs no discount at all.
+const t2 = toTagadaItems(r4.items);
+ok('no bundles -> zero discount', t2.fullPriceCents === Math.round(r4.subtotal * 100), t2.fullPriceCents);
 
 console.log('\nORDER REF');
 const refs = new Set(Array.from({length:500}, newRef));

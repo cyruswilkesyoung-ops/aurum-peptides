@@ -1,11 +1,13 @@
-// POST /api/orders — place an order and return payment instructions.
+// POST /api/orders — create a pending order and hand the buyer to TagadaPay.
 //
-// The browser sends identifiers only (js/app.js:410). Every number below is rebuilt
+// The browser sends identifiers only (js/app.js). Every number below is rebuilt
 // server-side from the generated catalogue; nothing the client sends about price,
-// subtotal or total is read.
-import { json, fail, priceOrder, paymentMethods, orderStore, newRef, fmtUSD, rateLimit, clientIp }
+// subtotal or total is read. The shipping address is collected by TagadaPay's
+// checkout and written back onto the order by the order/paid webhook
+// (tagada-webhook.mjs), so this endpoint only takes contact details and consent.
+import { json, fail, priceOrder, orderStore, newRef, fmtUSD, rateLimit, clientIp }
   from './_lib.mjs';
-import { notifyOwner, emailConfigured } from './_email.mjs';
+import { createTagadaCheckout, CheckoutUnavailable } from './_tagada.mjs';
 import { readSession } from './_session.mjs';
 
 export default async (req) => {
@@ -17,9 +19,9 @@ export default async (req) => {
   const session = readSession(req);
   if (!session) return fail('Please sign in to place an order.', 401);
 
-  // Before parsing anything: a script looping on this endpoint fills the order store,
-  // and the admin list reads every order on every load, so spam degrades the panel too.
-  // Generous enough that a real buyer placing a few orders never sees it.
+  // Before parsing anything: a script looping on this endpoint fills the order store
+  // AND creates TagadaPay sessions, so spam costs more than it used to. Generous
+  // enough that a real buyer retrying a failed payment never sees it.
   const limit = await rateLimit({ bucket: 'orders', id: clientIp(req), max: 8, windowMs: 60 * 60 * 1000 });
   if (!limit.ok) {
     console.warn('[orders] rate limited', clientIp(req));
@@ -51,15 +53,9 @@ export default async (req) => {
   const customer = {
     name: str(body.name, 120),
     email: str(body.email, 200),
-    address1: str(body.address1, 200),
-    address2: str(body.address2, 200),
-    city: str(body.city, 100),
-    state: str(body.state, 60),
-    postal: str(body.postal, 20),
-    country: str(body.country, 60) || 'United States',
     notes: str(body.notes, 1000),
   };
-  for (const field of ['name', 'email', 'address1', 'city', 'state', 'postal']) {
+  for (const field of ['name', 'email']) {
     if (!customer[field]) return fail('Please complete every required field.');
   }
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(customer.email)) {
@@ -71,15 +67,6 @@ export default async (req) => {
     priced = priceOrder(body.items);
   } catch (err) {
     return fail(err.message, 400);
-  }
-
-  // Refuse before writing anything if there is no way to be paid. An order with no
-  // payment instructions strands the buyer and leaves the owner a row that will never
-  // settle — better a loud failure the owner hears about on day one.
-  const methods = paymentMethods();
-  if (!methods.length) {
-    console.error('[orders] REFUSED: no payment method configured. Set one of CRYPTO_BTC_ADDRESS, CRYPTO_ETH_ADDRESS, CRYPTO_USDT_ADDRESS, CRYPTO_USDC_ADDRESS, CASHAPP_CASHTAG or ZELLE_CONTACT in Netlify, then REDEPLOY. Variables do not apply to running functions until the site rebuilds.');
-    return fail('Checkout is temporarily unavailable. Please contact support.', 503);
   }
 
   const order = {
@@ -94,38 +81,41 @@ export default async (req) => {
     totalFormatted: fmtUSD(priced.total),
     tracking: '',
     consent: { age21: true, researchUse: true },
+    userId: session.sub,
   };
 
+  const store = orderStore();
   try {
-    await orderStore().setJSON(order.ref, order);
+    await store.setJSON(order.ref, order);
   } catch (err) {
     console.error('[orders] could not persist order:', err);
     return fail('We could not place this order. Please try again.', 500);
   }
 
-  /* The order is safely stored by this point, so the email is strictly a bonus.
-     It is awaited rather than left dangling because the function process can be
-     frozen the moment we return, which would kill an in-flight request. It
-     cannot throw, and it gives up after 5s. */
+  // Hand off to TagadaPay. The order exists first so its ref can ride in the
+  // session metadata; if the hand-off fails the row is removed again — an order
+  // that never reached the payment page is not worth keeping or alerting on.
+  const [firstName, ...rest] = customer.name.split(/\s+/);
+  const checkout = globalThis.__TAGADA_STUB__ || createTagadaCheckout;
   try {
-    // Only worth a warning when a provider IS configured and still did not deliver.
-    // A site running without email is a deliberate state, not an incident.
-    const sent = await notifyOwner(order, new URL(req.url).origin);
-    if (!sent && emailConfigured()) {
-      console.warn(`[orders] ${order.ref} stored but the owner was not emailed`);
-    }
+    const handoff = await checkout(order, {
+      origin: new URL(req.url).origin,
+      customer: { email: customer.email, firstName, lastName: rest.join(' ') || undefined },
+    });
+    order.tagada = {
+      checkoutToken: handoff.checkoutToken,
+      funnelSessionId: handoff.funnelSessionId,
+      promotionId: handoff.promotionId || null,
+      discountCents: handoff.discountCents || 0,
+    };
+    await store.setJSON(order.ref, order);
+    return json({ ok: true, url: handoff.url, order: { ref: order.ref, total: order.total, totalFormatted: order.totalFormatted } });
   } catch (err) {
-    console.error('[orders] notify failed after the order was stored:', err?.message);
+    try { await store.delete(order.ref); } catch { /* a stray pending row is harmless */ }
+    if (err instanceof CheckoutUnavailable) {
+      return json({ ok: false, error: err.message, retryable: err.retryable }, err.status);
+    }
+    console.error('[orders] unexpected hand-off failure:', err);
+    return json({ ok: false, error: 'We could not start the payment. Please try again.', retryable: true }, 502);
   }
-
-  return json({
-    ok: true,
-    order: {
-      ref: order.ref, subtotal: order.subtotal, shipping: order.shipping,
-      total: order.total, totalFormatted: order.totalFormatted,
-    },
-    methods,
-    confirmWindow: process.env.ORDER_CONFIRM_WINDOW || '24 hours',
-    supportEmail: process.env.SUPPORT_EMAIL || 'support@pureauraa.com',
-  });
 };

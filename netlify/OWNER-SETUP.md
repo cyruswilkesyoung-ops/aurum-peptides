@@ -2,29 +2,43 @@
 
 This file lives under `netlify/`, which the site never serves. It replaces the
 "Environment variables" and "Confirming an order" sections of the old public
-/guide/ page, removed 2026-09-18.
+/guide/ page, removed 2026-09-18. Manual payment (Zelle / Cash App / crypto)
+was replaced by TagadaPay card checkout in November 2026.
 
 ## Environment variables (Netlify: Site configuration > Environment variables)
 
-The store refuses to take an order until at least one payment method is set.
-Any method left unset is simply not shown on the payment screen. After changing
-a variable, trigger a redeploy; Netlify does not apply it to running functions.
+After changing a variable, trigger a redeploy; Netlify does not apply it to
+running functions until the site rebuilds.
 
-Payment, at least one of:
+Payment — TagadaPay (all required; checkout refuses to start without them):
 
-    CRYPTO_BTC_ADDRESS    CRYPTO_BTC_NETWORK
-    CRYPTO_ETH_ADDRESS    CRYPTO_ETH_NETWORK
-    CRYPTO_USDT_ADDRESS   CRYPTO_USDT_NETWORK
-    CRYPTO_USDC_ADDRESS   CRYPTO_USDC_NETWORK
-    CASHAPP_CASHTAG       CASHAPP_NAME        (cashtag with or without the $)
-    ZELLE_CONTACT         ZELLE_NAME          (the email or phone that receives Zelle)
+    TAGADA_STORE_ID         the store (store_…)
+    TAGADA_ACCOUNT_ID       the account (acc_…) — required for the funnel hand-off
+    TAGADA_FUNNEL_ID        the checkout funnel (fnlv2_…)
+    TAGADA_FUNNEL_STEP_ID   the funnel step buyers land on
+    TAGADA_API_KEY          secret API key (TagadaPay dashboard → Settings → API Keys)
+    TAGADA_WEBHOOK_SECRET   signing secret of the registered webhook endpoint
+                            (returned once when the endpoint is created — see below)
+    TAGADA_TEST_MODE        optional; "true" makes every checkout session a draft
+                            (test) payment. Leave unset in production.
 
-The network is printed next to the address on the buyer's screen and must be the
-chain that wallet actually lives on. Coins sent over the wrong chain are gone and
-nobody can reverse it. This is the one setting where a mistake cannot be undone.
+The webhook endpoint is https://pureauraa.com/.netlify/functions/tagada-webhook
+and must be subscribed to order/paid, order/failed and order/refunded. It can be
+(re-)registered with:
 
-Older spellings still accepted: CRYPTO_BTC, CRYPTO_ETH, CRYPTO_USDT_TRC20,
-CRYPTO_USDC_ERC20, CASHAPP_HANDLE.
+    node scripts/tagada-webhook-setup.mjs
+
+which lists existing endpoints, creates the endpoint if missing, and stores its
+signing secret in the Netlify environment without printing it. Delivery history
+lives in the TagadaPay CRM under Integrations → Webhooks → Deliveries.
+
+Pricing note: TagadaPay charges its own per-variant prices, which are kept in
+`netlify/functions/_tagada-map.json` and must match the site's single-vial
+prices. The Buy 3 / Buy 5 bundle discount is applied per order as a one-off
+promotion code (named after the order ref) worth exactly the difference, and
+shipping is pinned to the site's computed amount, so the charged total always
+equals the site's total. If a price changes on a product page, change it in
+TagadaPay too and regenerate the map.
 
 Admin:
 
@@ -36,19 +50,23 @@ Order emails (optional, recommended; provider is Resend, free tier 3,000/month):
 
 Without these, orders still save and show in /admin/, only the emails are skipped.
 
-Wording on the payment screen:
+Wording:
 
-    ORDER_CONFIRM_WINDOW  the "typically confirmed within ..." text
     SUPPORT_EMAIL         the contact address shown to the buyer
 
 ## Day to day
 
-1. Email arrives: new order AUR-XXXXXX for $X, with items and shipping address.
-2. Funds land. Match the payment memo to that reference.
-3. Open /admin/, sign in, press Mark paid. It asks whether to email the buyer.
-4. When it ships, paste the tracking number and press Save & ship. The buyer
-   gets the tracking email.
-5. If a payment never arrives, Cancel records it and notifies nobody.
+1. A buyer pays by card on TagadaPay's checkout. The webhook marks the order
+   paid automatically, emails the buyer a confirmation, and emails you the
+   order with its shipping address.
+2. When it ships, open /admin/, paste the tracking number and press Save &
+   ship. The buyer gets the tracking email.
+3. "Needs review" means TagadaPay reported a paid amount different from the
+   site's total — check the TagadaPay CRM before shipping.
+4. "Payment failed" orders need nothing from you; the buyer was sent back to
+   checkout and can try again.
+5. Refunds made in the TagadaPay CRM mark the order "refunded" here
+   automatically and email you.
 
 ## Customer accounts (added November 2026)
 

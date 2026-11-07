@@ -1919,6 +1919,9 @@ body {
 .admin-status--paid { color: #7fd0a0; border-color: rgba(127, 208, 160, .4); }
 .admin-status--shipped { color: #7fb4d0; border-color: rgba(127, 180, 208, .4); }
 .admin-status--cancelled { color: #c98f8f; border-color: rgba(201, 143, 143, .4); }
+.admin-status--payment_review { color: #e0885c; border-color: rgba(224, 136, 92, .5); }
+.admin-status--payment_failed { color: #c98f8f; border-color: rgba(201, 143, 143, .4); }
+.admin-status--refunded { color: #b49fd0; border-color: rgba(180, 159, 208, .45); }
 .admin-order__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; padding: 1.1rem 0; }
 .admin-order__grid .eyebrow { display: block; margin: .9rem 0 .3rem; }
 .admin-order__grid .eyebrow:first-child { margin-top: 0; }

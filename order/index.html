@@ -3,23 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Your order | auraa</title>
-  <meta name="description" content="Payment instructions for your auraa order. For laboratory research use only.">
+  <title>Thank you | auraa</title>
+  <meta name="description" content="Order confirmation and payment status for your auraa order. For laboratory research use only.">
   <link rel="canonical" href="https://aurum-peptides.netlify.app/order/">
   <meta name="theme-color" content="#0a0a0a">
   <meta name="robots" content="noindex, nofollow">
   <meta name="format-detection" content="telephone=no">
   <meta property="og:site_name" content="auraa">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Your order | auraa">
-  <meta property="og:description" content="Payment instructions for your auraa order. For laboratory research use only.">
+  <meta property="og:title" content="Thank you | auraa">
+  <meta property="og:description" content="Order confirmation and payment status for your auraa order. For laboratory research use only.">
   <meta property="og:url" content="https://aurum-peptides.netlify.app/order/">
   <meta property="og:image" content="https://aurum-peptides.netlify.app/assets/og-20261006.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Your order | auraa">
-  <meta name="twitter:description" content="Payment instructions for your auraa order. For laboratory research use only.">
+  <meta name="twitter:title" content="Thank you | auraa">
+  <meta name="twitter:description" content="Order confirmation and payment status for your auraa order. For laboratory research use only.">
   <meta name="twitter:image" content="https://aurum-peptides.netlify.app/assets/og-20261006.png">
   
   <link rel="icon" href="  <link rel="icon" href="/assets/favicon-20261006.png" sizes="96x96">
@@ -82,9 +82,9 @@
     <div class="wrap">
       <div class="order-pane" id="orderPane" hidden>
         <div class="order-head">
-          <span class="order-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="m5 12.5 4 4 10-10"/></svg> Order received</span>
-          <h1 class="order-title">Order received — payment required to process</h1>
-          <p class="order-lead">Your order <b id="orderRef" class="order-ref-inline"></b> has been placed but is not yet paid. To complete it, send the total below using one of the payment methods, and include your order number in the payment note/memo so we can match it.</p>
+          <span class="order-badge" id="orderBadge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="m5 12.5 4 4 10-10"/></svg> <span id="orderBadgeText">Checking payment…</span></span>
+          <h1 class="order-title" id="orderTitle">Thank you — confirming your payment</h1>
+          <p class="order-lead" id="orderLead">We're confirming your payment with our payment provider. This page updates automatically — it usually takes a few seconds.</p>
         </div>
 
         <div class="order-grid">
@@ -92,22 +92,17 @@
             <span class="eyebrow">Your order number</span>
             <div class="order-ref" id="orderRefBig">AUR-—</div>
             <button class="copy-btn" data-copy-target="orderRefBig">Copy order number</button>
-            <p class="order-ref-note">Include this in the payment note or memo.</p>
+            <p class="order-ref-note">Keep this for any questions about your order.</p>
           </div>
           <div class="order-due-card">
-            <span class="eyebrow">Amount due</span>
-            <div class="order-due" id="orderTotal">$0.00</div>
-            <div class="order-due-sub" id="orderBreakdown"></div>
+            <span class="eyebrow">Order total</span>
+            <div class="order-due" id="orderTotal">$—</div>
+            <div class="order-due-sub" id="orderItems"></div>
           </div>
-        </div>
-
-        <div class="pay">
-          <div class="pay__tabs" id="payTabs" role="tablist"></div>
-          <div class="pay__panels" id="payPanels"></div>
         </div>
 
         <div class="order-foot">
-          <p>Once we confirm your payment, your order will be prepared and shipped. Orders are typically confirmed within <span id="orderWindow">24 hours</span>. You'll receive a shipping confirmation with tracking by email.</p>
+          <p id="orderNext">Once payment is confirmed, your order is prepared and shipped. You'll receive a confirmation email now and a shipping confirmation with tracking later.</p>
           <p>Questions about your order? Contact <a id="orderSupport" href="mailto:support@pureauraa.com">support@pureauraa.com</a>.</p>
           <p class="order-ruo">For research purposes only. Not for human or veterinary use.</p>
         </div>
@@ -116,7 +111,7 @@
       <div class="order-empty" id="orderEmpty">
         <p class="eyebrow">No recent order</p>
         <h2 class="page-hero__title" style="margin:1rem 0">Nothing to show here</h2>
-        <p class="page-hero__lead" style="margin-inline:auto">Payment instructions appear here right after you place an order. If you've closed this page, the same instructions were emailed to you with your order number.</p>
+        <p class="page-hero__lead" style="margin-inline:auto">Your order confirmation appears here right after checkout. If you've closed this page, your order number and confirmation were emailed to you.</p>
         <div class="hero__cta" style="justify-content:center;margin-top:var(--sp-4)">
           <a class="btn" href="/shop/">Browse the catalog <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
           <a class="btn btn--ghost" href="/contact/">Contact us</a>

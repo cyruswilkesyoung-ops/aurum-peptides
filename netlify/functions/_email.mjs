@@ -65,12 +65,12 @@ const shipTo = (c) =>
     .filter(Boolean)
     .join('\n  ');
 
-/* ---- to the owner, the moment an order lands ---------------------------- */
-export async function notifyOwner(order, siteUrl) {
+/* ---- to the owner, when TagadaPay confirms payment ----------------------- */
+export async function notifyOwnerPaid(order, siteUrl, { draft = false } = {}) {
   const to = (process.env.ADMIN_EMAIL || '').trim();
   if (!to) return false;
 
-  const text = `New order ${order.ref} for ${money(order.total)}.
+  const text = `${draft ? 'TEST (draft) payment — do not ship. ' : ''}Order ${order.ref} is PAID: ${money(order.total)} via TagadaPay.
 
 ITEMS
 ${lines(order)}
@@ -81,18 +81,28 @@ ${lines(order)}
 
 BUYER
   ${order.customer.name}
-  ${order.customer.email}
+  ${order.customer.email}${order.customer.phone ? `\n  ${order.customer.phone}` : ''}
 
 SHIP TO
   ${shipTo(order.customer)}
-${order.customer.notes ? `\nNOTES\n  ${order.customer.notes}\n` : ''}
-This order is not paid yet. When the funds land, match the memo to ${order.ref},
-then mark it paid here:
+${order.customer.notes ? `\nNOTES\n  ${order.customer.notes}\n` : ''}${order.payment?.orderId ? `\nTagadaPay order: ${order.payment.orderId}\n` : ''}
+Payment is confirmed — prepare and ship, then add tracking here:
 
   ${siteUrl}/admin/
 `;
 
-  return send({ to, subject: `New order ${order.ref} — ${money(order.total)}`, text });
+  return send({
+    to,
+    subject: `${draft ? '[TEST] ' : ''}Order ${order.ref} paid — ${money(order.total)}`,
+    text,
+  });
+}
+
+/* ---- to the owner, when something needs human eyes ----------------------- */
+export async function notifyOwnerAlert(subject, text) {
+  const to = (process.env.ADMIN_EMAIL || '').trim();
+  if (!to) return false;
+  return send({ to, subject, text });
 }
 
 /* ---- to the buyer, when the owner changes the status -------------------- */
@@ -104,12 +114,14 @@ export async function notifyBuyer(order, status) {
     return send({
       to,
       subject: `Payment received — order ${order.ref}`,
-      text: `Thanks, we've matched your payment to order ${order.ref}.
+      text: `Thanks — your payment for order ${order.ref} is confirmed.
 
 Your order is being prepared. You'll get another email with tracking once it
 ships.
 
   Total ${money(order.total)}
+
+For research purposes only. Not for human or veterinary use.
 `,
     });
   }

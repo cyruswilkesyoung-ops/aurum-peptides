@@ -39,6 +39,12 @@
   status = 200
   force = true
 
+[[redirects]]
+  from = "/api/order-status"
+  to = "/.netlify/functions/order-status"
+  status = 200
+  force = true
+
 # publish = "." means the whole repo is served, so the server source and the generated
 # catalogue would otherwise be fetchable as static files. They hold no secrets — every
 # credential comes from the environment — but they are not part of the site.
