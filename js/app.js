@@ -341,7 +341,9 @@
   $$('[data-year]').forEach((el) => (el.textContent = new Date().getFullYear()));
 
   /* =====================================================================
-     CHECKOUT — collects details, posts identifiers only, never prices.
+     CHECKOUT — collects contact + consent, posts identifiers only (never
+     prices), then redirects to TagadaPay's secure checkout. Shipping address
+     and card details are collected there.
      ===================================================================== */
   const esc = (s = '') =>
     String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -355,8 +357,21 @@
     const form = $('#checkoutForm');
     const errEl = $('#coError');
     const submit = $('#coSubmit');
+    const submitLabel = submit.innerHTML;
     const THRESH = 150;
     const SHIP_FLAT = 9.95;
+
+    // Prefill contact from the signed-in account (checkout is login-gated,
+    // so this normally succeeds; a quiet failure just leaves the fields blank).
+    fetch('/api/auth/me')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!d || !d.user) return;
+        const nameEl = $('#coName'), emailEl = $('#coEmail');
+        if (nameEl && !nameEl.value) nameEl.value = d.user.name || '';
+        if (emailEl && !emailEl.value) emailEl.value = d.user.email || '';
+      })
+      .catch(() => {});
 
     const drawTotals = () => {
       if (!cart.length) {
@@ -383,7 +398,7 @@
         <div class="checkout__row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
         <div class="checkout__row"><span>Shipping</span><span>${shipping ? fmt(shipping) : 'Free'}</span></div>
         <div class="checkout__row checkout__row--total"><span>Total due</span><span>${fmt(subtotal + shipping)}</span></div>
-        <p class="checkout__note">Final total is confirmed by our server when the order is placed.</p>`;
+        <p class="checkout__note">This exact total is confirmed by our server and charged on the secure payment page.</p>`;
       submit.disabled = false;
     };
     drawTotals();
@@ -400,12 +415,6 @@
       const payload = {
         name: $('#coName').value,
         email: $('#coEmail').value,
-        address1: $('#coAddr1').value,
-        address2: $('#coAddr2').value,
-        city: $('#coCity').value,
-        state: $('#coState').value,
-        postal: $('#coPostal').value,
-        country: $('#coCountry').value,
         notes: $('#coNotes').value,
         company: $('#coCompany').value, // honeypot
         ageConfirm: true,
@@ -419,7 +428,7 @@
       };
 
       submit.disabled = true;
-      submit.textContent = 'Placing order…';
+      submit.textContent = 'Preparing secure payment…';
       try {
         const res = await fetch('/api/orders', {
           method: 'POST',
@@ -432,17 +441,21 @@
           return;
         }
         const data = await res.json();
-        if (!res.ok || !data.ok) throw new Error(data.error || 'We could not place this order.');
+        if (!res.ok || !data.ok) {
+          const err = new Error(data.error || 'We could not start the payment.');
+          err.retryable = data.retryable !== false;
+          throw err;
+        }
 
-        // Hand the instructions to /order/ via sessionStorage — never the URL.
-        sessionStorage.setItem('auraa.lastOrder', JSON.stringify(data));
-        cart = [];
-        writeCart(cart);
-        location.assign('/order/');
+        // The cart survives until /order/ sees the payment settle, so a buyer
+        // whose card is declined comes back to an intact cart.
+        sessionStorage.setItem('auraa.pendingOrder', data.order.ref);
+        submit.textContent = 'Redirecting to secure payment…';
+        location.assign(data.url);
       } catch (err) {
         submit.disabled = false;
-        submit.innerHTML = 'Place order — pay manually';
-        showErr(err.message || 'We could not place this order. Please try again.');
+        submit.innerHTML = err.retryable === false ? submitLabel : 'Try again — continue to secure payment';
+        showErr(err.message || 'We could not start the payment. Please try again.');
       }
     });
 
@@ -454,105 +467,79 @@
   }
 
   /* =====================================================================
-     ORDER — payment instructions, rendered from the server's response.
+     ORDER — the thank-you page TagadaPay returns to. Reads ?ref= (set when
+     the order was created), then polls the server while the payment webhook
+     settles. All state comes from the server; nothing here trusts the URL
+     beyond using the random ref as a lookup key.
      ===================================================================== */
   const orderPane = $('#orderPane');
   if (orderPane) initOrder();
 
   function initOrder() {
-    let data = null;
-    try {
-      data = JSON.parse(sessionStorage.getItem('auraa.lastOrder'));
-    } catch {
-      data = null;
-    }
-    if (!data || !data.order) return; // the empty state is already in the DOM
+    const ref =
+      new URLSearchParams(location.search).get('ref') ||
+      sessionStorage.getItem('auraa.pendingOrder') ||
+      '';
+    if (!/^AUR-[A-Z0-9]{6}$/.test(ref)) return; // the empty state is already in the DOM
 
     $('#orderEmpty').hidden = true;
     orderPane.hidden = false;
-
-    const o = data.order;
-    $('#orderRef').textContent = o.ref;
-    $('#orderRefBig').textContent = o.ref;
-    $('#orderTotal').textContent = o.totalFormatted || fmt(o.total);
-    $('#orderWindow').textContent = data.confirmWindow || '24 hours';
-    const sup = $('#orderSupport');
-    if (sup && data.supportEmail) {
-      sup.textContent = data.supportEmail;
-      sup.href = 'mailto:' + data.supportEmail;
-    }
-    $('#orderBreakdown').textContent =
-      o.shipping > 0
-        ? `${fmt(o.subtotal)} + ${fmt(o.shipping)} shipping`
-        : `${fmt(o.subtotal)} · free shipping`;
-
-    // payment method tabs
-    const tabs = $('#payTabs');
-    const panels = $('#payPanels');
-    const methods = data.methods || [];
-    tabs.innerHTML = methods
-      .map(
-        (m, i) =>
-          `<button class="pay__tab${i === 0 ? ' is-active' : ''}" role="tab" data-pay="${esc(m.id)}">${esc(m.label)}</button>`
-      )
-      .join('');
-    panels.innerHTML = methods.map((m, i) => renderMethod(m, i === 0)).join('');
-
-    $$('.pay__tab', tabs).forEach((t) =>
-      t.addEventListener('click', () => {
-        $$('.pay__tab', tabs).forEach((x) => x.classList.toggle('is-active', x === t));
-        $$('.pay__panel', panels).forEach((p) =>
-          p.classList.toggle('is-active', p.dataset.pay === t.dataset.pay)
-        );
-      })
-    );
-
+    $('#orderRefBig').textContent = ref;
     wireCopy(document);
 
-    function renderMethod(m, active) {
-      const cls = `pay__panel${active ? ' is-active' : ''}`;
-      if (m.id === 'crypto') {
-        return `<div class="${cls}" data-pay="crypto">
-          ${m.coins
-            .map(
-              (c, i) => `<div class="pay__addr">
-              <div class="pay__addr-main">
-                <span class="eyebrow">${esc(c.label)} <small>· ${esc(c.network)}</small></span>
-                <code id="addr-${esc(c.code)}">${esc(c.address)}</code>
-                <button class="copy-btn" data-copy-target="addr-${esc(c.code)}">Copy ${esc(c.code)} address</button>
-              </div>
-              ${c.qr ? `<img class="pay__qr" src="${c.qr}" alt="QR code for the ${esc(c.label)} address" width="120" height="120">` : ''}
-            </div>`
-            )
-            .join('')}
-          <p class="pay__hint">Send the equivalent of the amount due. Include your order number in the transaction note where your wallet supports it.</p>
-        </div>`;
+    const badgeText = $('#orderBadgeText');
+    const title = $('#orderTitle');
+    const lead = $('#orderLead');
+    const next = $('#orderNext');
+
+    let polls = 0;
+    const MAX_POLLS = 20; // ~1 minute; webhooks normally land in seconds
+
+    async function check() {
+      polls++;
+      let d = null;
+      try {
+        const res = await fetch(`/api/order-status?ref=${encodeURIComponent(ref)}`);
+        d = res.ok ? await res.json() : null;
+      } catch {
+        d = null;
       }
-      if (m.id === 'cashapp') {
-        return `<div class="${cls}" data-pay="cashapp">
-          <div class="pay__addr">
-            <div class="pay__addr-main">
-              <span class="eyebrow">Cash App</span>
-              <code id="addr-cashapp">${esc(m.handle)}</code>
-              <button class="copy-btn" data-copy-target="addr-cashapp">Copy $cashtag</button>
-            </div>
-            ${m.qr ? `<img class="pay__qr" src="${m.qr}" alt="QR code for the Cash App handle" width="120" height="120">` : ''}
-          </div>
-          <p class="pay__hint">Put your order number in the “For” note so we can match the payment.</p>
-        </div>`;
+      const o = d && d.ok ? d.order : null;
+      if (o) {
+        $('#orderTotal').textContent = o.totalFormatted || '$—';
+        $('#orderItems').innerHTML = (o.items || [])
+          .map((i) => `${i.qty} × ${esc(i.name)} <small>(${esc(i.meta)})</small>`)
+          .join('<br>');
       }
-      return `<div class="${cls}" data-pay="zelle">
-        <div class="pay__addr">
-          <div class="pay__addr-main">
-            <span class="eyebrow">Zelle${m.name ? ` <small>· ${esc(m.name)}</small>` : ''}</span>
-            <code id="addr-zelle">${esc(m.handle)}</code>
-            <button class="copy-btn" data-copy-target="addr-zelle">Copy Zelle contact</button>
-          </div>
-          ${m.qr ? `<img class="pay__qr" src="${m.qr}" alt="QR code for the Zelle contact" width="120" height="120">` : ''}
-        </div>
-        <p class="pay__hint">Add your order number to the memo field.</p>
-      </div>`;
+
+      if (o && (o.status === 'paid' || o.status === 'shipped')) {
+        badgeText.textContent = o.test ? 'Test payment confirmed' : 'Payment confirmed';
+        title.textContent = 'Thank you — your order is confirmed';
+        lead.innerHTML = `Payment for order <b class="order-ref-inline">${esc(ref)}</b> is confirmed. A receipt has been emailed to you.`;
+        next.textContent = "Your order is being prepared. You'll receive a shipping confirmation with tracking by email.";
+        // The sale is settled; now the cart can go.
+        cart = [];
+        writeCart(cart);
+        renderCount();
+        sessionStorage.removeItem('auraa.pendingOrder');
+        return;
+      }
+      if (o && o.status === 'payment_failed') {
+        badgeText.textContent = 'Payment not completed';
+        title.textContent = 'Your payment did not go through';
+        lead.innerHTML = `The payment for order <b class="order-ref-inline">${esc(ref)}</b> was not completed. Your cart is untouched — you can try again.`;
+        next.innerHTML = '<a class="btn" href="/checkout/">Return to checkout</a>';
+        return;
+      }
+      if (polls >= MAX_POLLS) {
+        badgeText.textContent = 'Payment processing';
+        title.textContent = 'Your payment is still processing';
+        lead.innerHTML = `We haven't received the final confirmation for order <b class="order-ref-inline">${esc(ref)}</b> yet. You'll get an email the moment it settles — no need to pay again.`;
+        return;
+      }
+      setTimeout(check, polls < 5 ? 2000 : 4000);
     }
+    check();
   }
 
   function wireCopy(root) {

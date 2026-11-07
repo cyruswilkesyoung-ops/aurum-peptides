@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Checkout | auraa</title>
-  <meta name="description" content="Complete your research-compound order. Payment is arranged manually after the order is placed. For laboratory research use only.">
+  <meta name="description" content="Complete your research-compound order with secure card payment. For laboratory research use only.">
   <link rel="canonical" href="https://aurum-peptides.netlify.app/checkout/">
   <meta name="theme-color" content="#0a0a0a">
   <meta name="robots" content="noindex, nofollow">
@@ -12,14 +12,14 @@
   <meta property="og:site_name" content="auraa">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Checkout | auraa">
-  <meta property="og:description" content="Complete your research-compound order. Payment is arranged manually after the order is placed. For laboratory research use only.">
+  <meta property="og:description" content="Complete your research-compound order with secure card payment. For laboratory research use only.">
   <meta property="og:url" content="https://aurum-peptides.netlify.app/checkout/">
   <meta property="og:image" content="https://aurum-peptides.netlify.app/assets/og-20261006.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Checkout | auraa">
-  <meta name="twitter:description" content="Complete your research-compound order. Payment is arranged manually after the order is placed. For laboratory research use only.">
+  <meta name="twitter:description" content="Complete your research-compound order with secure card payment. For laboratory research use only.">
   <meta name="twitter:image" content="https://aurum-peptides.netlify.app/assets/og-20261006.png">
   
   <link rel="icon" href="  <link rel="icon" href="/assets/favicon-20261006.png" sizes="96x96">
@@ -84,7 +84,7 @@
     <a href="/">Home</a><span>/</span> <span aria-current="page" style="color:var(--ink-soft)">Checkout</span>
   </nav>
       <h1 class="page-hero__title" style="margin-top:1rem">Checkout</h1>
-      <p class="page-hero__lead">Orders are placed first and paid manually — no card is taken on this site. After you submit, you'll receive payment instructions and an order number to include with your payment.</p>
+      <p class="page-hero__lead">Confirm the acknowledgments below, then continue to our secure payment page to pay by card. Your shipping address is collected there, and your order is confirmed automatically the moment payment settles.</p>
     </div>
   </section>
 
@@ -101,26 +101,12 @@
           </div>
 
           <div class="checkout__block">
-            <span class="eyebrow">2 — Shipping address</span>
-            <div class="field"><label for="coAddr1">Street address</label><input id="coAddr1" name="address1" autocomplete="address-line1" required></div>
-            <div class="field"><label for="coAddr2">Apartment, suite, unit <small style="text-transform:none;letter-spacing:0">(optional)</small></label><input id="coAddr2" name="address2" autocomplete="address-line2"></div>
-            <div class="field-row">
-              <div class="field"><label for="coCity">City</label><input id="coCity" name="city" autocomplete="address-level2" required></div>
-              <div class="field"><label for="coState">State / region</label><input id="coState" name="state" autocomplete="address-level1"></div>
-            </div>
-            <div class="field-row">
-              <div class="field"><label for="coPostal">Postal code</label><input id="coPostal" name="postal" autocomplete="postal-code" required></div>
-              <div class="field"><label for="coCountry">Country</label><input id="coCountry" name="country" autocomplete="country-name" value="United States" required></div>
-            </div>
-          </div>
-
-          <div class="checkout__block">
-            <span class="eyebrow">3 — Order notes <small style="text-transform:none;letter-spacing:0">(optional)</small></span>
+            <span class="eyebrow">2 — Order notes <small style="text-transform:none;letter-spacing:0">(optional)</small></span>
             <div class="field"><label class="sr-only" for="coNotes">Order notes</label><textarea id="coNotes" name="notes" rows="3" placeholder="Anything we should know about this order."></textarea></div>
           </div>
 
           <div class="checkout__block">
-            <span class="eyebrow">4 — Required acknowledgments</span>
+            <span class="eyebrow">3 — Required acknowledgments</span>
             <label class="checkbox" style="margin-bottom:.9rem">
               <input type="checkbox" id="coAge" required>
               <span>I confirm I am 21 years of age or older.</span>
@@ -140,8 +126,8 @@
 
           <div class="checkout__error" id="coError" hidden role="alert"></div>
 
-          <button class="btn btn--block" type="submit" id="coSubmit" style="margin-top:var(--sp-3)">Place order — pay manually <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
-          <p class="mono" style="font-size:.66rem;color:var(--ink-faint);text-align:center;margin-top:.9rem;letter-spacing:.05em">NO CARD IS CHARGED · PAYMENT INSTRUCTIONS FOLLOW</p>
+          <button class="btn btn--block" type="submit" id="coSubmit" style="margin-top:var(--sp-3)">Continue to secure payment <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
+          <p class="mono" style="font-size:.66rem;color:var(--ink-faint);text-align:center;margin-top:.9rem;letter-spacing:.05em">SECURE CARD PAYMENT · SHIPPING ADDRESS COLLECTED AT PAYMENT</p>
         </form>
 
         <aside class="checkout__summary">

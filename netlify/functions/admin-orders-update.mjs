@@ -2,7 +2,7 @@
 import { json, fail, adminOk, orderStore, rateLimit, clientIp } from './_lib.mjs';
 import { notifyBuyer, emailConfigured } from './_email.mjs';
 
-const STATUSES = new Set(['pending_payment', 'paid', 'shipped', 'cancelled']);
+const STATUSES = new Set(['pending_payment', 'paid', 'shipped', 'cancelled', 'payment_failed', 'payment_review', 'refunded']);
 
 export default async (req) => {
   if (req.method !== 'POST') return fail('Method not allowed.', 405);

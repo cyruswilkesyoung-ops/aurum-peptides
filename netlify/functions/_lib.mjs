@@ -1,4 +1,4 @@
-// Shared server helpers: pricing, admin auth, order storage, payment instructions.
+// Shared server helpers: pricing, admin auth, order storage.
 import { getStore, getDeployStore } from '@netlify/blobs';
 import { timingSafeEqual, createHash, randomUUID } from 'node:crypto';
 import catalogFile from './_catalog.json' with { type: 'json' };
@@ -90,7 +90,9 @@ export function adminOk(req) {
 
 /* ---- order reference -------------------------------------------------------
    AUR-XXXXXX from a UUID. Not sequential: a guessable reference is the whole
-   authorisation story on the customer-facing order page. */
+   authorisation story on the customer-facing order page. The same string is
+   also used as the one-off TagadaPay promotion code for the order's bundle
+   discount (see _tagada.mjs), so its shape must stay promo-code safe. */
 export function newRef() {
   return 'AUR-' + randomUUID().replace(/-/g, '').slice(0, 6).toUpperCase();
 }
@@ -134,66 +136,3 @@ export function priceOrder(items) {
   return { items: priced, subtotal, shipping, total: money(subtotal + shipping) };
 }
 
-/* ---- payment instructions --------------------------------------------------
-   Built from env, never committed. Only methods that are actually configured are
-   offered. If NOTHING is configured the caller refuses the order: taking money-less
-   orders leaves the buyer with no way to pay and the owner with phantom rows.
-
-   Variable names follow netlify/OWNER-SETUP.md so the documentation and the
-   code agree. The shorter aliases are accepted too, because the
-   cost of a silent typo here is an order screen with no way to pay on it. */
-const env = (...names) => {
-  for (const n of names) {
-    const v = process.env[n];
-    if (v && v.trim()) return v.trim();
-  }
-  return '';
-};
-
-export function paymentMethods() {
-  const methods = [];
-
-  /* The network is configurable and shown next to every address. Sending USDT to
-     an ERC-20 address over TRC-20 (or the reverse) destroys the funds, so the
-     chain the owner actually holds must win over any default we pick. */
-  const coins = [
-    /* The screen prints "<label> · <network>", so BTC's default is "On-chain"
-       rather than "Bitcoin": it avoids "Bitcoin · Bitcoin" and still tells the
-       buyer this is not Lightning and not a wrapped BTC on another chain. */
-    ['BTC',  'Bitcoin',  env('CRYPTO_BTC_NETWORK') || 'On-chain',
-             env('CRYPTO_BTC_ADDRESS', 'CRYPTO_BTC')],
-    ['ETH',  'Ethereum', env('CRYPTO_ETH_NETWORK') || 'ERC-20',
-             env('CRYPTO_ETH_ADDRESS', 'CRYPTO_ETH')],
-    ['USDT', 'Tether',   env('CRYPTO_USDT_NETWORK') || 'TRC-20',
-             env('CRYPTO_USDT_ADDRESS', 'CRYPTO_USDT_TRC20')],
-    ['USDC', 'USD Coin', env('CRYPTO_USDC_NETWORK') || 'ERC-20',
-             env('CRYPTO_USDC_ADDRESS', 'CRYPTO_USDC_ERC20')],
-  ]
-    .filter(([, , , address]) => address)
-    .map(([code, label, network, address]) => ({ code, label, network, address, qr: '' }));
-
-  if (coins.length) methods.push({ id: 'crypto', label: 'Crypto', coins });
-
-  const handle = env('CASHAPP_CASHTAG', 'CASHAPP_HANDLE');
-  if (handle) {
-    methods.push({
-      id: 'cashapp', label: 'Cash App',
-      name: env('CASHAPP_NAME') || 'Aurum Peptides',
-      handle: handle.startsWith('$') ? handle : '$' + handle,
-      qr: '',
-    });
-  }
-
-  /* The order screen has always been able to render Zelle; it just was never fed. */
-  const zelle = env('ZELLE_CONTACT');
-  if (zelle) {
-    methods.push({
-      id: 'zelle', label: 'Zelle',
-      name: env('ZELLE_NAME') || 'Aurum Peptides',
-      handle: zelle,
-      qr: '',
-    });
-  }
-
-  return methods;
-}

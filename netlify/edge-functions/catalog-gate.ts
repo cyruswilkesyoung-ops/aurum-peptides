@@ -102,6 +102,10 @@ export const config: Config = {
     // Packshots are deliberately NOT gated: TagadaPay stores each variant's
     // imageUrl and must be able to fetch it without a customer session
     // (owner decision, 2026-11-04). Product data and prices stay gated above.
+    // The TagadaPay webhook (/.netlify/functions/tagada-webhook) is also
+    // outside this gate on purpose — it authenticates with an HMAC signature,
+    // not a customer session.
     '/api/orders',
+    '/api/order-status',
   ],
 };
