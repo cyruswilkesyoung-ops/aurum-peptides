@@ -383,7 +383,7 @@
       itemsEl.innerHTML = cart
         .map(
           (l) => `<div class="checkout__item">
-            <img src="${esc(l.img)}" alt="" width="40" height="52" loading="lazy">
+            <img src="${esc(l.img)}" alt="" width="40" height="50" loading="lazy">
             <div>
               <b>${esc(l.name)}</b>
               <span>${esc(l.meta)} · Qty ${l.qty}</span>

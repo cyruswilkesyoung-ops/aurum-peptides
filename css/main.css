@@ -122,6 +122,13 @@ svg {
   display: block;
   max-width: 100%;
 }
+/* When max-width (or a CSS width) shrinks an image, the HTML height attribute
+   must not keep applying as a fixed pixel height — that stretches the photo.
+   The width/height attributes still reserve layout space via the UA's
+   aspect-ratio mapping. */
+img {
+  height: auto;
+}
 a {
   color: inherit;
   text-decoration: none;
@@ -812,6 +819,9 @@ em, .italic { font-style: italic; }
 .card__media img {
   width: 70%;
   height: auto;
+  aspect-ratio: 4 / 5; /* matches the 1000×1250 packshot photos */
+  object-fit: contain;
+  object-position: center;
   transition: transform 0.7s var(--ease-out), filter 0.7s var(--ease-out);
   filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.55));
   z-index: 1;
@@ -983,6 +993,7 @@ em, .italic { font-style: italic; }
 
 /* ---- product page ------------------------------------------------------ */
 .pdp { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 4vw, 3.5rem); align-items: start; }
+.pdp > * { min-width: 0; }
 .pdp__media {
   position: sticky;
   top: 92px;
@@ -996,7 +1007,14 @@ em, .italic { font-style: italic; }
   place-items: center;
   overflow: hidden;
 }
-.pdp__media img { width: min(74%, 320px); filter: drop-shadow(0 30px 46px rgba(26,24,19,0.18)); }
+.pdp__media img {
+  width: min(74%, 320px);
+  height: auto;
+  aspect-ratio: 4 / 5; /* matches the 1000×1250 packshot photos */
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 30px 46px rgba(26,24,19,0.18));
+}
 .pdp__breadcrumb { margin-bottom: var(--sp-3); }
 .pdp__title { font-family: var(--f-display); font-weight: 360; font-size: var(--step-4); line-height: 1; margin: 0.3rem 0 0.5rem; }
 .pdp__ref { color: var(--ink-soft); font-size: 1.02rem; }
@@ -1301,7 +1319,15 @@ em, .italic { font-style: italic; }
 .drawer__empty svg { color: var(--ink-faint); margin: 0 auto 1rem; }
 .drawer__foot { border-top: 1px solid var(--line); padding: 1.5rem; }
 .cart-line { display: grid; grid-template-columns: 56px 1fr auto; gap: 0.9rem; padding: 0.9rem 0; border-bottom: 1px solid var(--line-2); align-items: center; }
+.cart-line > * { min-width: 0; }
 .cart-line__img { background: var(--paper-2); border-radius: var(--radius); padding: 0.3rem; }
+.cart-line__img img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: contain;
+  object-position: center;
+}
 .cart-line__name { font-family: var(--f-display); font-weight: 460; font-size: 0.98rem; }
 .cart-line__meta { font-family: var(--f-mono); font-size: 0.7rem; color: var(--ink-faint); }
 .cart-line__price { font-family: var(--f-display); font-weight: 460; }
@@ -1805,7 +1831,16 @@ body {
 .checkout__summary-title { font-family: var(--f-display); font-weight: 500; font-size: var(--step-1); margin-bottom: 1rem; }
 .checkout__items { display: grid; gap: .9rem; }
 .checkout__item { display: grid; grid-template-columns: 40px 1fr auto; gap: .8rem; align-items: center; }
-.checkout__item img { border-radius: 3px; background: #0e0e0e; }
+.checkout__item > * { min-width: 0; }
+.checkout__item img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 3px;
+  background: #0e0e0e;
+}
 .checkout__item b { display: block; font-family: var(--f-display); font-weight: 500; font-size: .95rem; }
 .checkout__item span { font-family: var(--f-mono); font-size: .66rem; color: var(--ink-faint); }
 .checkout__item em { font-style: normal; font-family: var(--f-display); font-weight: 500; }
