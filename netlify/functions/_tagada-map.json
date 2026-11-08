@@ -154,7 +154,7 @@
     },
     "glp-2-trz": {
       "productId": "product_db6c1938fb27",
-      "name": "GIP-2 TRZ",
+      "name": "GLP-2T",
       "variants": {
         "10": {
           "variantId": "variant_dce59456e27f",
@@ -178,7 +178,7 @@
     },
     "glp-3-rt": {
       "productId": "product_535287319fb1",
-      "name": "GIP-3 RT",
+      "name": "GLP-3 RT",
       "variants": {
         "10": {
           "variantId": "variant_b3433e477446",
