@@ -1,0 +1,32 @@
+{
+  "_about": "Store product (slug) and size (the cart line's variant mgKey) to PrymaLab SKU. A size not listed here is not carried by PrymaLab: an order holding it is held for a person and never partly sent. tests/prymalab.test.mjs fails if a catalog size is in neither list.",
+  "partnerId": "162",
+  "site": "pureauraa.com",
+  "skus": {
+    "bpc-157": { "5": "BC5", "10": "BC10" },
+    "cjc-1295-dac": { "5": "CD5" },
+    "cjc-1295-no-dac": { "5": "CND5" },
+    "dsip": { "5": "DS5" },
+    "epithalon": { "10": "ET10", "50": "ET50" },
+    "ghk-cu": { "50": "CU50", "100": "CU100" },
+    "glow": { "70": "BBG70" },
+    "klow": { "80": "BBGK" },
+    "glp-2-trz": { "10": "TR10", "30": "TR30", "60": "TR60" },
+    "glp-3-rt": { "10": "RT10", "30": "RT30", "60": "RT60" },
+    "mots-c": { "10": "MS10" },
+    "nad": { "500": "NJ500" },
+    "tesamorelin": { "5": "TSM5", "10": "TSM10" },
+    "thymosin-alpha-1": { "5": "TA5", "10": "TA10" },
+    "bpc-157-tb-500": { "20": "BB20" },
+    "bac-water-10ml": { "10 mL": "WA10" }
+  },
+  "notCarried": {
+    "acetic-acid": ["3 mL ×10"],
+    "ahk-cu": ["50"],
+    "bac-water-30ml": ["30 mL"],
+    "bpc-157-tb-500": ["40"],
+    "mots-c": ["30", "60"],
+    "nad": ["100"],
+    "tesamorelin": ["20"]
+  }
+}
