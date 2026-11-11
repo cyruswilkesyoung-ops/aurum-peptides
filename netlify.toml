@@ -203,6 +203,14 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
+# Wolverine Blend was renamed to BPC-157 + TB-500 (its two compounds). Old links land
+# on the renamed product page.
+[[redirects]]
+  from = "/shop/wolverine-blend/*"
+  to = "/shop/bpc-157-tb-500/:splat"
+  status = 301
+  force = true
+
 # The old "How this site was built" page is gone. Anyone holding the link lands home.
 [[redirects]]
   from = "/reconstitution-calculator/*"

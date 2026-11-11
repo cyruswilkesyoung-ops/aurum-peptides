@@ -3,12 +3,12 @@
   "products": {
     "acetic-acid": {
       "slug": "acetic-acid",
-      "name": "Acetic Acid 0.6% — 10 Pack",
+      "name": "Acetic Acid 0.6% \u2014 10 Pack",
       "soldOut": false,
       "variants": [
         {
-          "mgKey": "3 mL ×10",
-          "label": "3 mL ×10",
+          "mgKey": "3 mL \u00d710",
+          "label": "3 mL \u00d710",
           "price": 29.99
         }
       ],
@@ -588,9 +588,9 @@
         }
       ]
     },
-    "wolverine-blend": {
-      "slug": "wolverine-blend",
-      "name": "Wolverine Blend",
+    "bpc-157-tb-500": {
+      "slug": "bpc-157-tb-500",
+      "name": "BPC-157 + TB-500",
       "soldOut": false,
       "variants": [
         {
