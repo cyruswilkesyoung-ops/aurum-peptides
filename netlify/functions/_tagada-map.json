@@ -4,11 +4,11 @@
   "products": {
     "acetic-acid": {
       "productId": "product_4e2b91dbe808",
-      "name": "Acetic Acid 0.6% — 10 Pack",
+      "name": "Acetic Acid 0.6% \u2014 10 Pack",
       "variants": {
-        "3 mL ×10": {
+        "3 mL \u00d710": {
           "variantId": "variant_3007a2a30c35",
-          "label": "3 mL ×10",
+          "label": "3 mL \u00d710",
           "sku": "acetic-acid-3-ml-10",
           "priceCentsUSD": 2999
         }
@@ -296,7 +296,7 @@
         }
       }
     },
-    "wolverine-blend": {
+    "bpc-157-tb-500": {
       "productId": "product_a7ef879ee4ec",
       "name": "Wolverine Blend",
       "variants": {
