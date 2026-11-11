@@ -1695,7 +1695,7 @@ body {
 .hero__stat b { color: var(--ink); }
 .ruo-ribbon { background: #121212; border-color: var(--line); color: var(--ink-soft); }
 
-/* tagline bar — Research | Precision | Performance */
+/* tagline bar — Research | Precision | Purity */
 .tagline-bar {
   display: inline-flex;
   align-items: center;
