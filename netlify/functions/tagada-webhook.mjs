@@ -15,6 +15,13 @@ import { getStore, getDeployStore } from '@netlify/blobs';
 import { json, fail, orderStore, fmtUSD } from './_lib.mjs';
 import { notifyBuyer, notifyOwnerPaid, notifyOwnerAlert } from './_email.mjs';
 import { disableOrderPromotion } from './_tagada.mjs';
+import { sendToPrymalab } from './_prymalab.mjs';
+
+// PrymaLab gets a short budget inside this delivery: TagadaPay must get its answer
+// well inside its own timeout. A slow or failed send is left in the PrymaLab queue
+// (prymalab-retry.mjs asks again hourly, same external_id), never retried by failing
+// this webhook, which would only repeat the emails.
+const PRYMALAB_BUDGET = { me: 2500, order: 5500 };
 
 const HANDLED = new Set(['order/paid', 'order/failed', 'order/refunded']);
 const MAX_EVENT_AGE_MS = 2 * 60 * 60 * 1000;
@@ -136,6 +143,8 @@ export default async (req) => {
     order.customer = {
       ...order.customer,
       name: order.customer.name || [addr.firstName, addr.lastName].filter(Boolean).join(' '),
+      // The name on the parcel, which can differ from the account name. PrymaLab ships to it.
+      shipName: [addr.firstName, addr.lastName].filter(Boolean).join(' ') || order.customer.shipName || '',
       address1: addr.address1 || order.customer.address1 || '',
       address2: addr.address2 || order.customer.address2 || '',
       city: addr.city || order.customer.city || '',
@@ -177,13 +186,20 @@ export default async (req) => {
     // Money is recorded; everything after this point is best-effort and must
     // never turn the delivery into a retry (which would just repeat the emails).
     await disableOrderPromotion(order).catch(() => {});
-    try {
-      const emailedBuyer = await notifyBuyer(order, 'paid');
-      const emailedOwner = await notifyOwnerPaid(order, new URL(req.url).origin, { draft: isDraft });
-      if (!emailedBuyer || !emailedOwner) console.warn(`[tagada-webhook] ${ref} paid; buyer emailed: ${emailedBuyer}, owner emailed: ${emailedOwner}`);
-    } catch (err) {
-      console.error(`[tagada-webhook] ${ref} paid but notification failed:`, err?.message);
-    }
+    // The supplier send and the emails run side by side. sendToPrymalab never throws and,
+    // with PRYMALAB_SEND not "on" or no key, does nothing at all.
+    await Promise.allSettled([
+      sendToPrymalab(store, ref, { via: 'paid-webhook', timeouts: PRYMALAB_BUDGET }),
+      (async () => {
+        try {
+          const emailedBuyer = await notifyBuyer(order, 'paid');
+          const emailedOwner = await notifyOwnerPaid(order, new URL(req.url).origin, { draft: isDraft });
+          if (!emailedBuyer || !emailedOwner) console.warn(`[tagada-webhook] ${ref} paid; buyer emailed: ${emailedBuyer}, owner emailed: ${emailedOwner}`);
+        } catch (err) {
+          console.error(`[tagada-webhook] ${ref} paid but notification failed:`, err?.message);
+        }
+      })(),
+    ]);
     if (event.id) await ledger.setJSON(eventKey, { at: Date.now(), type: event.type, ref }).catch(() => {});
     return json({ ok: true, ref, status: 'paid' });
   }

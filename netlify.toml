@@ -22,6 +22,20 @@
 # ---- API ---------------------------------------------------------------------
 # js/app.js calls these three paths. Most specific first.
 [[redirects]]
+  from = "/api/admin/orders/prymalab"
+  to = "/.netlify/functions/admin-prymalab-send"
+  status = 200
+  force = true
+
+# PrymaLab's order webhook (tracking). Signature checked in the function; not behind the
+# catalog gate, which covers only the paths listed in netlify/edge-functions/catalog-gate.ts.
+[[redirects]]
+  from = "/api/webhooks/prymalab"
+  to = "/.netlify/functions/prymalab-webhook"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/admin/orders/update"
   to = "/.netlify/functions/admin-orders-update"
   status = 200

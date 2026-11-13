@@ -648,6 +648,19 @@
       $$('[data-action]', list).forEach((b) =>
         b.addEventListener('click', async () => {
           const ref = b.dataset.ref;
+          if (b.dataset.action === 'prymalab') {
+            if (!confirm('Send order ' + ref + ' to PrymaLab now? PrymaLab ships and bills every order it accepts.')) return;
+            b.disabled = true;
+            try {
+              const d = await api('/api/admin/orders/prymalab', { ref });
+              toast('PrymaLab: ' + (PRYMALAB_LABEL[d.state] || d.state));
+              await load();
+            } catch (err) {
+              toast(err.message);
+              b.disabled = false;
+            }
+            return;
+          }
           const body = { ref, notify: false };
           if (b.dataset.action === 'status') {
             body.status = b.dataset.value;
@@ -674,6 +687,27 @@
         })
       );
     }
+
+    // PrymaLab's part of an order, as the owner reads it. Plain words, no codes.
+    const PRYMALAB_LABEL = {
+      submitted: 'with PrymaLab',
+      held_balance: 'waiting on PrymaLab balance',
+      retrying: 'trying again',
+      held: 'held, needs you',
+      rejected: 'refused by PrymaLab',
+      key_rejected: 'key rejected',
+      failed: 'failed, needs you',
+      conflict: 'needs checking',
+      supplier_cancelled: 'cancelled by PrymaLab',
+      stopped: 'stopped after 3 days',
+    };
+    function prymalabBlock(o) {
+      const p = o.prymalab;
+      if (!p) return '';
+      return `<span class="eyebrow">PrymaLab</span>
+        <p><b>${esc(PRYMALAB_LABEL[p.state] || p.state)}</b>${p.supplier_order_id ? ` <span class="mono">#${esc(p.supplier_order_id)}</span>` : ''}<br>${esc(p.detail || '')}</p>`;
+    }
+    const canSendPrymalab = (o) => o.status === 'paid' && !o.tracking && !(o.prymalab && o.prymalab.state === 'submitted');
 
     function card(o) {
       const when = new Date(o.createdAt).toLocaleString('en-US', {
@@ -708,12 +742,14 @@
             <span class="eyebrow">Placed</span>
             <p class="mono">${esc(when)}</p>
             ${o.tracking ? `<span class="eyebrow">Tracking</span><p class="mono">${esc(o.tracking)}</p>` : ''}
+            ${prymalabBlock(o)}
           </div>
         </div>
         <div class="admin-order__actions">
           <button class="btn btn--sm" data-action="status" data-value="paid" data-ref="${esc(o.ref)}">Mark paid</button>
           <button class="btn btn--ghost btn--sm" data-action="status" data-value="shipped" data-ref="${esc(o.ref)}">Mark shipped</button>
           <button class="btn btn--ghost btn--sm" data-action="status" data-value="cancelled" data-ref="${esc(o.ref)}">Cancel</button>
+          ${canSendPrymalab(o) ? `<button class="btn btn--sm" data-action="prymalab" data-ref="${esc(o.ref)}">Send to PrymaLab</button>` : ''}
           <span class="admin-track">
             <input id="trk-${esc(o.ref)}" placeholder="Tracking number" value="${esc(o.tracking || '')}">
             <button class="btn btn--sm" data-action="tracking" data-ref="${esc(o.ref)}">Save &amp; ship</button>
