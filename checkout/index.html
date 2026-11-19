@@ -31,7 +31,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cinzel:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cinzel:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap"></noscript>
   <script src="/js/age-gate.js?v=20261006"></script>
-  <link rel="stylesheet" href="/css/main.css?v=20261006">
+  <link rel="stylesheet" href="/css/main.css?v=20261119">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://aurum-peptides.netlify.app/"},{"@type":"ListItem","position":2,"name":"Checkout","item":"https://aurum-peptides.netlify.app/checkout/"}]}</script>
 </head>
 <body class="">
@@ -106,6 +106,20 @@
           </div>
 
           <div class="checkout__block">
+            <span class="eyebrow">Referral code <small style="text-transform:none;letter-spacing:0">(optional)</small></span>
+            <div class="aff-ref" id="coRefChip" hidden>
+              <span>Code <b class="mono" id="coRefCode"></b> applied</span>
+              <button type="button" class="btn btn--ghost btn--sm" id="coRefRemove">Remove</button>
+            </div>
+            <div class="aff-ref" id="coRefEntry">
+              <label class="sr-only" for="coRef">Referral code</label>
+              <input id="coRef" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40" placeholder="Enter a code">
+              <button type="button" class="btn btn--ghost btn--sm" id="coRefApply">Apply</button>
+            </div>
+            <p class="aff-ref__msg" id="coRefMsg" role="status"></p>
+          </div>
+
+          <div class="checkout__block">
             <span class="eyebrow">3 — Required acknowledgments</span>
             <label class="checkbox" style="margin-bottom:.9rem">
               <input type="checkbox" id="coAge" required>
@@ -169,6 +183,7 @@
           <li><a href="/about/">About</a></li>
           <li><a href="/blog/">Research Guides</a></li>
           <li><a href="/contact/">Contact</a></li>
+          <li><a href="/affiliates/">Affiliates</a></li>
         </ul>
       </div>
       <div class="footer__col">
@@ -220,6 +235,6 @@
     <p class="mono" style="font-size:.62rem;color:var(--ink-faint);text-align:center;margin-top:.8rem;letter-spacing:.06em">FOR RESEARCH PURPOSES ONLY. NOT FOR HUMAN OR VETERINARY USE.</p>
   </div>
 </aside>
-  <script src="/js/app.js?v=20261006" defer></script>
+  <script src="/js/app.js?v=20261119" defer></script>
 </body>
 </html>

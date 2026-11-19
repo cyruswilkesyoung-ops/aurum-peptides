@@ -16,6 +16,7 @@ import { json, fail, orderStore, fmtUSD } from './_lib.mjs';
 import { notifyBuyer, notifyOwnerPaid, notifyOwnerAlert } from './_email.mjs';
 import { disableOrderPromotion } from './_tagada.mjs';
 import { sendToPrymalab } from './_prymalab.mjs';
+import { reportAffiliateOrder } from './_affiliate.mjs';
 
 // PrymaLab gets a short budget inside this delivery: TagadaPay must get its answer
 // well inside its own timeout. A slow or failed send is left in the PrymaLab queue
@@ -189,6 +190,8 @@ export default async (req) => {
     // The supplier send and the emails run side by side. sendToPrymalab never throws and,
     // with PRYMALAB_SEND not "on" or no key, does nothing at all.
     await Promise.allSettled([
+      // Partner app (paid). Never throws; bounded by its own short timeout.
+      order.affiliate?.code ? reportAffiliateOrder(order, 'paid') : null,
       sendToPrymalab(store, ref, { via: 'paid-webhook', timeouts: PRYMALAB_BUDGET }),
       (async () => {
         try {
@@ -228,6 +231,7 @@ export default async (req) => {
     eventId: event.id || null,
   };
   await store.setJSON(ref, order);
+  if (order.affiliate?.code) await reportAffiliateOrder(order, 'refunded');
   await notifyOwnerAlert(
     `Order ${ref} refunded`,
     `TagadaPay reports a refund on order ${ref}${Number.isFinite(data.refundAmount) ? ` of ${fmtUSD(data.refundAmount / 100)}` : ''}.\n\nThe order is now marked "refunded" in /admin/.`

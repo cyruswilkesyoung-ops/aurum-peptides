@@ -29,6 +29,12 @@
   force = true
 
 [[redirects]]
+  from = "/api/admin/orders/affiliate"
+  to = "/.netlify/functions/admin-affiliate-resend"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/admin/orders/prymalab"
   to = "/.netlify/functions/admin-prymalab-send"
   status = 200

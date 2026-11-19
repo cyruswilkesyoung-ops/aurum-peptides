@@ -1,10 +1,11 @@
 // POST /api/admin/orders/update — set an order's status and/or tracking. Bearer auth.
 import { json, fail, adminOk, orderStore, rateLimit, clientIp } from './_lib.mjs';
 import { notifyBuyer, emailConfigured } from './_email.mjs';
+import { reportAffiliateOrder, finishInBackground } from './_affiliate.mjs';
 
 const STATUSES = new Set(['pending_payment', 'paid', 'shipped', 'cancelled', 'payment_failed', 'payment_review', 'refunded']);
 
-export default async (req) => {
+export default async (req, context) => {
   if (req.method !== 'POST') return fail('Method not allowed.', 405);
   // A single shared password with no cap is an unlimited guessing budget. Counted per
   // IP and only on FAILURE, so a legitimate admin working through the panel is never
@@ -34,6 +35,7 @@ export default async (req) => {
   const order = await store.get(ref, { type: 'json' }).catch(() => null);
   if (!order) return fail('Unknown order reference.', 404);
 
+  const statusBefore = order.status;
   if (body.status !== undefined) {
     if (!STATUSES.has(body.status)) return fail('Unknown status.', 400);
     order.status = body.status;
@@ -49,6 +51,12 @@ export default async (req) => {
   } catch (err) {
     console.error('[admin-orders-update] write failed:', err);
     return fail('Could not update that order.', 500);
+  }
+
+  // Partner app: report only a real change into paid / cancelled / refunded, after the
+  // write succeeded. Fire-and-forget with a short timeout; it can never fail this update.
+  if (order.affiliate?.code && order.status !== statusBefore && ['paid', 'cancelled', 'refunded'].includes(order.status)) {
+    await finishInBackground(context, reportAffiliateOrder(order, order.status));
   }
 
   // `notify` asks us to email the buyer. emailed:false is returned whenever the message
