@@ -9,6 +9,38 @@
   const fmt = (n) =>
     '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+
+  /* ---- referral capture ------------------------------------------------
+     ?ref=CODE on any page is checked with the partner app through our own
+     /api/affiliate/code, which sets the first-party aur_ref cookie (30 days,
+     last valid code wins) only when the code is valid. A bad code sets nothing.
+     Pages behind the login redirect carry the code in ?next=, so the check also
+     reads it there and a visitor who signs in or confirms the age gate keeps it. */
+  const REF_RE = /^[A-Za-z0-9_-]{2,40}$/;
+  const readRef = () => {
+    const m = document.cookie.match(/(?:^|;\s*)aur_ref=([^;]+)/);
+    try { return m ? decodeURIComponent(m[1]) : ''; } catch { return ''; }
+  };
+  const clearRef = () => { document.cookie = 'aur_ref=; Path=/; Secure; SameSite=Lax; Max-Age=0'; };
+  const checkRef = async (code) => {
+    // -> 'valid' (cookie now set) | 'invalid' | 'error'
+    try {
+      const r = await fetch('/api/affiliate/code?set=1&code=' + encodeURIComponent(code), { credentials: 'same-origin' });
+      if (!r.ok) return 'error';
+      const d = await r.json();
+      return d && d.valid === true ? 'valid' : 'invalid';
+    } catch { return 'error'; }
+  };
+  (() => {
+    if (location.pathname.startsWith('/admin')) return;
+    const q = new URLSearchParams(location.search);
+    let code = q.get('ref');
+    if (!code && q.get('next')) {
+      try { code = new URL(q.get('next'), location.origin).searchParams.get('ref'); } catch { /* ignore */ }
+    }
+    if (code && REF_RE.test(code.trim())) checkRef(code.trim());
+  })();
+
   /* ---- header stuck + scroll progress --------------------------------- */
   const header = $('.header');
   const progress = $('#scrollProgress');
@@ -348,6 +380,48 @@
   const esc = (s = '') =>
     String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+
+  /* =====================================================================
+     AFFILIATE APPLICATION (/affiliates/) — posts to /api/affiliate/apply,
+     which forwards to the partner app.
+     ===================================================================== */
+  const affForm = $('#affForm');
+  if (affForm) {
+    const errEl = $('#affError'), btn = $('#affSubmit'), label = btn.firstElementChild;
+    const show = (m) => { errEl.textContent = m; errEl.hidden = false; };
+    affForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errEl.hidden = true;
+      const v = (id) => $(id).value.trim();
+      const body = {
+        name: v('#affName'), email: v('#affEmail'), socials: v('#affSocials'), audience: v('#affAudience'),
+        promo: v('#affPromo'), payout_method: $('#affPayout').value, website: v('#affWebsite'),
+        company_url: $('#affCompany').value, researchConfirm: $('#affAck').checked,
+      };
+      for (const k of ['name', 'email', 'socials', 'audience', 'promo', 'payout_method'])
+        if (!body[k]) return show('Please complete every required field.');
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(body.email)) return show('That email address does not look right.');
+      if (!body.researchConfirm) return show('Please confirm the research-use acknowledgment.');
+      btn.disabled = true;
+      label.textContent = 'Sending…';
+      try {
+        const res = await fetch('/api/affiliate/apply', {
+          method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
+        });
+        const d = await res.json().catch(() => ({}));
+        if (!res.ok || !d.ok) throw new Error(d.error || 'We could not send your application. Please try again.');
+        $('#affFormWrap').hidden = true;
+        const done = $('#affDone');
+        done.hidden = false;
+        done.focus();
+      } catch (err) {
+        btn.disabled = false;
+        label.textContent = 'Submit application';
+        show(err.message || 'We could not send your application. Please try again.');
+      }
+    });
+  }
+
   const checkoutRoot = $('#checkout');
   if (checkoutRoot) initCheckout();
 
@@ -402,6 +476,35 @@
       submit.disabled = false;
     };
     drawTotals();
+
+    /* Referral code: shows the applied code, lets the buyer type or remove one.
+       Both paths go through the same validation as ?ref=. The order itself reads the
+       cookie on the server and checks it again; nothing here is trusted for money. */
+    const refInput = $('#coRef'), refApply = $('#coRefApply'), refChip = $('#coRefChip'),
+      refRemove = $('#coRefRemove'), refMsg = $('#coRefMsg'), refEntry = $('#coRefEntry');
+    const drawRef = () => {
+      if (!refChip) return;
+      const c = readRef();
+      refChip.hidden = !c;
+      refEntry.hidden = !!c;
+      if (c) $('#coRefCode').textContent = c;
+    };
+    if (refApply) {
+      const applyRef = async () => {
+        const c = refInput.value.trim();
+        refMsg.textContent = '';
+        if (!REF_RE.test(c)) { refMsg.textContent = 'Enter a valid code.'; return; }
+        refApply.disabled = true;
+        const r = await checkRef(c);
+        refApply.disabled = false;
+        if (r === 'valid') { refInput.value = ''; drawRef(); }
+        else refMsg.textContent = r === 'invalid' ? 'That code is not valid.' : 'We could not check that code right now. Please try again.';
+      };
+      refApply.addEventListener('click', applyRef);
+      refInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); applyRef(); } });
+      refRemove.addEventListener('click', () => { clearRef(); refMsg.textContent = ''; drawRef(); });
+      drawRef();
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -679,6 +782,17 @@
       $$('[data-action]', list).forEach((b) =>
         b.addEventListener('click', async () => {
           const ref = b.dataset.ref;
+          if (b.dataset.action === 'affiliate') {
+            b.disabled = true;
+            try {
+              await api('/api/admin/orders/affiliate', { ref });
+              toast('Sent to the partner app.');
+            } catch (err) {
+              toast(err.message);
+            }
+            b.disabled = false;
+            return;
+          }
           if (b.dataset.action === 'prymalab') {
             if (!confirm('Send order ' + ref + ' to PrymaLab now? PrymaLab ships and bills every order it accepts.')) return;
             b.disabled = true;
@@ -738,6 +852,12 @@
       return `<span class="eyebrow">PrymaLab</span>
         <p><b>${esc(PRYMALAB_LABEL[p.state] || p.state)}</b>${p.supplier_order_id ? ` <span class="mono">#${esc(p.supplier_order_id)}</span>` : ''}<br>${esc(p.detail || '')}</p>`;
     }
+    function affiliateBlock(o) {
+      const a = o.affiliate;
+      if (!a || !a.code) return '';
+      return `<span class="eyebrow">Referral code</span>
+        <p><b class="mono">${esc(a.code)}</b>${a.verified === false ? ' <span>(not confirmed when ordered)</span>' : ''}</p>`;
+    }
     const canSendPrymalab = (o) => o.status === 'paid' && !o.tracking && !(o.prymalab && o.prymalab.state === 'submitted');
 
     function card(o) {
@@ -774,12 +894,14 @@
             <p class="mono">${esc(when)}</p>
             ${o.tracking ? `<span class="eyebrow">Tracking</span><p class="mono">${esc(o.tracking)}</p>` : ''}
             ${prymalabBlock(o)}
+            ${affiliateBlock(o)}
           </div>
         </div>
         <div class="admin-order__actions">
           <button class="btn btn--sm" data-action="status" data-value="paid" data-ref="${esc(o.ref)}">Mark paid</button>
           <button class="btn btn--ghost btn--sm" data-action="status" data-value="shipped" data-ref="${esc(o.ref)}">Mark shipped</button>
           <button class="btn btn--ghost btn--sm" data-action="status" data-value="cancelled" data-ref="${esc(o.ref)}">Cancel</button>
+          ${o.affiliate && o.affiliate.code ? `<button class="btn btn--ghost btn--sm" data-action="affiliate" data-ref="${esc(o.ref)}">Resend to partner app</button>` : ''}
           ${canSendPrymalab(o) ? `<button class="btn btn--sm" data-action="prymalab" data-ref="${esc(o.ref)}">Send to PrymaLab</button>` : ''}
           <span class="admin-track">
             <input id="trk-${esc(o.ref)}" placeholder="Tracking number" value="${esc(o.tracking || '')}">

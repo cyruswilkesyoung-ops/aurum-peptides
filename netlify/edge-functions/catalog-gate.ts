@@ -107,5 +107,8 @@ export const config: Config = {
     // not a customer session.
     '/api/orders',
     '/api/order-status',
+    // Deliberately NOT gated: /affiliates/ (public sign-up page) and /api/affiliate/*
+    // (sign-up form + referral code check) must work for signed-out visitors. Neither
+    // carries product, price or account data.
   ],
 };

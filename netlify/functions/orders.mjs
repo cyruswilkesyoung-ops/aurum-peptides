@@ -9,8 +9,9 @@ import { json, fail, priceOrder, orderStore, newRef, fmtUSD, rateLimit, clientIp
   from './_lib.mjs';
 import { createTagadaCheckout, CheckoutUnavailable } from './_tagada.mjs';
 import { readSession } from './_session.mjs';
+import { readRefCookie, validateCode, reportAffiliateOrder, finishInBackground } from './_affiliate.mjs';
 
-export default async (req) => {
+export default async (req, context) => {
   if (req.method !== 'POST') return fail('Method not allowed.', 405);
 
   // The edge gate already turns anonymous requests away at /api/orders, but this
@@ -69,6 +70,19 @@ export default async (req) => {
     return fail(err.message, 400);
   }
 
+  // Referral code: read from the first-party cookie, never from anything the page sends
+  // about price or commission, and re-checked with the partner app here. A code the app
+  // says is invalid is dropped. If the app cannot answer, the code is kept but marked
+  // unverified (the app validates again when the order is reported), so an outage never
+  // costs a partner their order.
+  let affiliate;
+  const refCode = readRefCookie(req);
+  if (refCode) {
+    const v = await validateCode(refCode, 2000);
+    if (v.valid) affiliate = { code: refCode, verified: true };
+    else if (v.error) affiliate = { code: refCode, verified: false };
+  }
+
   const order = {
     ref: newRef(),
     createdAt: new Date().toISOString(),
@@ -83,6 +97,7 @@ export default async (req) => {
     consent: { age21: true, researchUse: true },
     userId: session.sub,
   };
+  if (affiliate) order.affiliate = affiliate;
 
   const store = orderStore();
   try {
@@ -109,6 +124,8 @@ export default async (req) => {
       discountCents: handoff.discountCents || 0,
     };
     await store.setJSON(order.ref, order);
+    // Tell the partner app (pending). Never throws, never fails the order.
+    if (order.affiliate) await finishInBackground(context, reportAffiliateOrder(order, 'pending_payment'));
     return json({ ok: true, url: handoff.url, order: { ref: order.ref, total: order.total, totalFormatted: order.totalFormatted } });
   } catch (err) {
     try { await store.delete(order.ref); } catch { /* a stray pending row is harmless */ }
