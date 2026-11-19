@@ -9,13 +9,15 @@ import { createHmac } from 'node:crypto';
 
 export const COOKIE = 'aur_ref';
 export const COOKIE_DAYS = 30;
-// Letters, digits, dash, underscore. Anything else is never sent to the app or stored.
-export const CODE_RE = /^[A-Za-z0-9_-]{2,40}$/;
+// Same shape the partner app issues: 3 to 20 letters and digits, stored upper case (the app
+// upper-cases every code it reads, so the store keeps the same form). Anything else is never
+// sent to the app or stored.
+export const CODE_RE = /^[A-Z0-9]{3,20}$/;
 
 const baseUrl = () => (process.env.AFFILIATE_APP_URL || 'https://auraa-partners.vercel.app').replace(/\/+$/, '');
 
 export const normalizeCode = (v) => {
-  const s = typeof v === 'string' ? v.trim() : '';
+  const s = typeof v === 'string' ? v.trim().toUpperCase() : '';
   return CODE_RE.test(s) ? s : '';
 };
 

@@ -84,6 +84,11 @@ appMode = 'down'; r = await codeReq('code=GOOD1&set=1');
 ok('app down -> 502, no cookie', r.status === 502 && !r.headers.get('set-cookie'), r.status);
 reset();
 
+r = await codeReq('code=good1&set=1'); j = await r.json();
+ok('lower-case code is accepted and the cookie is stored UPPER case', j.valid === true && /^aur_ref=GOOD1;/.test(r.headers.get('set-cookie') || ''));
+ok('  app is asked about the upper-case form', calls.at(-1).url.endsWith('/code/GOOD1'));
+reset();
+
 console.log('\nAPPLY FORM');
 const apply = (b) => affiliate(new Request('https://x/api/affiliate/apply', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b) }));
 const app = { name: 'Pat', email: 'pat@example.com', socials: '@pat', audience: 'x', promo: 'y', payout_method: 'PayPal', website: '', company_url: '', researchConfirm: true };
@@ -118,6 +123,13 @@ r = await placeOrder(); j = await r.json(); o = mem.get(j.order?.ref);
 ok('no cookie -> no app calls at all', r.status === 200 && !o.affiliate && calls.length === 0);
 r = await placeOrder('aur_ref=' + encodeURIComponent('GOOD1;<script>')); j = await r.json(); o = mem.get(j.order?.ref);
 ok('malformed cookie ignored', r.status === 200 && !o.affiliate);
+
+mem.clear();
+r = await placeOrder('aur_ref=good1'); j = await r.json(); o = mem.get(j.order?.ref);
+ok('lower-case cookie -> order saved with the upper-case code', o?.affiliate?.code === 'GOOD1');
+ok('  report body carries the upper-case code', JSON.parse(calls.find((c) => c.url.endsWith('/api/affiliates/order')).init.body).code === 'GOOD1');
+r = await placeOrder('aur_ref=AB'); j = await r.json(); o = mem.get(j.order?.ref);
+ok('2-character code (app minimum is 3) ignored', !o.affiliate);
 
 console.log('\nSIGNATURE');
 reset(); mem.clear();
