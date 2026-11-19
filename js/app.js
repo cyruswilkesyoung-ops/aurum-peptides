@@ -16,7 +16,7 @@
      last valid code wins) only when the code is valid. A bad code sets nothing.
      Pages behind the login redirect carry the code in ?next=, so the check also
      reads it there and a visitor who signs in or confirms the age gate keeps it. */
-  const REF_RE = /^[A-Za-z0-9_-]{2,40}$/;
+  const REF_RE = /^[A-Za-z0-9]{3,20}$/;
   const readRef = () => {
     const m = document.cookie.match(/(?:^|;\s*)aur_ref=([^;]+)/);
     try { return m ? decodeURIComponent(m[1]) : ''; } catch { return ''; }
