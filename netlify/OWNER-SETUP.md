@@ -81,3 +81,5 @@ and no email-confirmation block, which the payment processor's reviewer relies o
   logs every customer out. Set the dedicated secret to decouple the two:
   `netlify env:set AUTH_SESSION_SECRET "$(openssl rand -hex 32)"` and redeploy.
 - Password-reset emails use the existing `RESEND_API_KEY` / `EMAIL_FROM`.
+
+<!-- e2e preview 2026-11-19: throwaway branch, not merged -->
