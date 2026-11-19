@@ -21,6 +21,13 @@
 
 # ---- API ---------------------------------------------------------------------
 # js/app.js calls these three paths. Most specific first.
+# Sign-in link for the standalone Affiliate Scraper Tool (admin password required, checked in the function).
+[[redirects]]
+  from = "/api/admin/scraper-ticket"
+  to = "/.netlify/functions/admin-scraper-ticket"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/api/admin/orders/prymalab"
   to = "/.netlify/functions/admin-prymalab-send"

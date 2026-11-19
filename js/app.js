@@ -619,6 +619,37 @@
       })
     );
 
+    // tabs: Orders and the Affiliate Scraper Tool
+    const views = { orders: $('#adminOrdersView'), scraper: $('#adminScraperView') };
+    $$('#adminTabs [data-view]').forEach((b) =>
+      b.addEventListener('click', () => {
+        $$('#adminTabs [data-view]').forEach((x) => {
+          const on = x === b;
+          x.classList.toggle('is-active', on);
+          x.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        Object.keys(views).forEach((k) => { views[k].hidden = k !== b.dataset.view; });
+      })
+    );
+    // Opens the scraper app signed in: the server checks the admin password and returns a
+    // 60 second single-use link. The tab is opened first, inside the click, so it is not blocked.
+    $('#adminScraperOpen').addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      const scErr = $('#adminScraperError');
+      scErr.hidden = true;
+      btn.disabled = true;
+      const w = window.open('about:blank', '_blank');
+      try {
+        const d = await api('/api/admin/scraper-ticket');
+        if (w) { w.opener = null; w.location.href = d.url; } else { location.href = d.url; }
+      } catch (err) {
+        if (w) w.close();
+        scErr.textContent = err.message;
+        scErr.hidden = false;
+      }
+      btn.disabled = false;
+    });
+
     // resume a session after a refresh
     if (pass()) {
       load()
