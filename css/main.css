@@ -2068,7 +2068,7 @@ html.gate-armed body > *:not(.agegate) { visibility: hidden; }
 
 /* Admin tabs + the Affiliate Scraper Tool card */
 .admin-tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: var(--sp-3, 1.4rem); }
-.admin-tabs .tag-filter { min-height: 44px; cursor: pointer; background: transparent; }
+.admin-tabs .tag-filter { min-height: 44px; cursor: pointer; }
 .admin-scraper { max-width: 640px; }
 .admin-scraper p { margin: 0 0 1rem; }
 .admin-scraper .btn { margin-top: .4rem; }
