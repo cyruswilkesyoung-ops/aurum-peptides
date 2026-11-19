@@ -2072,4 +2072,4 @@ html.gate-armed body > *:not(.agegate) { visibility: hidden; }
 .admin-scraper { max-width: 640px; }
 .admin-scraper p { margin: 0 0 1rem; }
 .admin-scraper .btn { margin-top: .4rem; }
-@media (max-width: 560px) { .admin-tabs .tag-filter { flex: 1 1 100%; text-align: center; } }
+.admin-tabs .tag-filter.is-active, .admin-tabs .tag-filter.is-active:hover { color: #14100a; border-color: transparent; }
