@@ -316,6 +316,43 @@ const rd = await retryDefault();
 ok('scheduled handler answers 204', rd.status === 204);
 
 /* =========================================================================== */
+say('\nGUARD 2026-11-23: a paid order the webhook missed still reaches PrymaLab');
+// AUR-372345 was paid, but the webhook's read came back with the old "pending_payment"
+// copy, so it was skipped as "not paid" with no record and the hourly run never saw it.
+resetPl();
+for (const k of [...mem.keys()]) mem.delete(k);
+const sinceSaved = meta.get('since');
+meta.set('since', { at: new Date(Date.now() - 2 * 3600000).toISOString() });
+const ago = (min) => new Date(Date.now() - min * 60000).toISOString();
+const missed = mkOrder({ paidAt: ago(30) });
+const tooNew = mkOrder({ paidAt: ago(2) });
+const beforeStart = mkOrder({ paidAt: ago(180) });
+const unpaidMissed = mkOrder({ status: 'pending_payment', paidAt: ago(30) });
+const shippedMissed = mkOrder({ paidAt: ago(30), tracking: '1Z999' });
+const rm = await runRetry();
+ok('hourly run sends the paid order with no record', rm.missed === 1 && posts().length === 1 && JSON.parse(posts()[0].init.body).external_id === missed, JSON.stringify(rm));
+ok('  it is now submitted, via retry-missed', mem.get(missed).prymalab.state === 'submitted' && mem.get(missed).prymalab.attempts.at(-1).via === 'retry-missed');
+ok('  paid under 10 minutes ago -> left for the webhook', !mem.get(tooNew).prymalab);
+ok('  paid before sending began -> never sent (no backfill)', !mem.get(beforeStart).prymalab);
+ok('  unpaid or already shipped -> untouched', !mem.get(unpaidMissed).prymalab && !mem.get(shippedMissed).prymalab);
+const rm2 = await runRetry();
+ok('  a second run sends nothing again', rm2.missed === 0 && posts().length === 1, JSON.stringify(rm2));
+if (sinceSaved) meta.set('since', sinceSaved); else meta.delete('since');
+
+resetPl();
+const staleRef = mkOrder();
+const paidCopy = JSON.parse(JSON.stringify(mem.get(staleRef)));
+const staleStore = {
+  ...makeStore(mem),
+  // An eventual read right after the "paid" write: still the old copy.
+  get: async (k, opts = {}) => (opts.consistency === 'strong' ? JSON.parse(JSON.stringify(mem.get(k))) : { ...paidCopy, status: 'pending_payment' }),
+};
+res = await P.sendToPrymalab(staleStore, staleRef, { via: 'paid-webhook' });
+ok('send reads the order strongly, so a just-paid order is not skipped as unpaid', res.sent === true && res.state === 'submitted', JSON.stringify(res).slice(0, 160));
+const noStrong = { ...makeStore(mem), get: async (k, opts = {}) => { if (opts.consistency) throw new Error('BlobsConsistencyError'); return JSON.parse(JSON.stringify(mem.get(k))); } };
+ok('no strong reads available -> falls back to a normal read', (await P.readFresh(noStrong, staleRef))?.ref === staleRef);
+
+/* =========================================================================== */
 say('\nADMIN: Send to PrymaLab');
 process.env.ADMIN_PASSWORD = 'test-password';
 const AUTH = { authorization: 'Bearer test-password' };
