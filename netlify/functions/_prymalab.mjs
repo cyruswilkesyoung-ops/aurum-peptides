@@ -294,9 +294,18 @@ export async function readSince() {
   return got?.at && Number.isFinite(Date.parse(got.at)) ? got.at : null;
 }
 
+/** Newest copy of an order: a strong read, or a normal read if strong reads are unavailable here. */
+export async function readFresh(store, key) {
+  try {
+    return await store.get(key, { type: 'json', consistency: 'strong' });
+  } catch {
+    return store.get(key, { type: 'json' }).catch(() => null);
+  }
+}
+
 /** Writes the PrymaLab record onto the order, re-reading it first so a concurrent change is not lost. */
 async function record(store, ref, rec, via) {
-  const fresh = (await store.get(ref, { type: 'json' }).catch(() => null)) || null;
+  const fresh = (await readFresh(store, ref)) || null;
   if (!fresh) return null;
   const prev = fresh.prymalab || {};
   const now = new Date().toISOString();
@@ -336,7 +345,10 @@ export async function sendToPrymalab(store, ref, { via, timeouts = {}, fetcher, 
       return { sent: false, skipped: 'off', why: 'PrymaLab sending is switched off, so nothing was sent.' };
     }
     if (!REF.test(String(ref))) return { sent: false, skipped: 'bad_ref', why: 'Unknown order reference.' };
-    const order = await store.get(ref, { type: 'json' }).catch(() => null);
+    // Strong read (2026-11-23): the paid webhook writes status "paid" a moment before this
+    // runs, and an eventual read can still hand back the old "pending_payment" copy. That
+    // skipped AUR-372345 as "not paid" and left no record, so nothing retried it.
+    const order = await readFresh(store, ref);
     if (!order) return { sent: false, skipped: 'missing', why: 'Unknown order reference.' };
 
     const pr = order.prymalab || null;
