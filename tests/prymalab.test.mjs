@@ -25,6 +25,7 @@ const tagadaWebhook = (await import(BASE + 'tagada-webhook.mjs')).default;
 const adminSend = (await import(BASE + 'admin-prymalab-send.mjs')).default;
 const trackHook = (await import(BASE + 'prymalab-webhook.mjs')).default;
 const { runRetry } = await import(BASE + 'prymalab-retry.mjs');
+const statusEp = (await import(BASE + 'admin-prymalab-status.mjs')).default;
 const retryDefault = (await import(BASE + 'prymalab-retry.mjs')).default;
 
 let pass = 0, fail = 0;
@@ -429,6 +430,101 @@ ok('tracking for an order whose answer was lost (retrying) is accepted, leaves t
 const refHeld = mkOrder({ prymalab: { state: 'held', firstAt: new Date().toISOString() } });
 r = await deliverP(fulfilled(refHeld)); j = await r.json();
 ok('tracking for a held (never sent) order is ignored', j.ignored === 'not an order this store sent' && !mem.get(refHeld).tracking);
+
+/* =========================================================================== */
+say('\nTRACKING READ-BACK (backup for the webhook)');
+on();
+resetPl();
+for (const k of [...mem.keys()]) mem.delete(k);
+meta.set('since', { at: new Date(Date.now() - 86400000).toISOString() });
+let mails = [];
+process.env.RESEND_API_KEY = 'rk_test'; process.env.EMAIL_FROM = 'orders@pureauraa.com'; process.env.ADMIN_EMAIL = 'cyrus@example.com';
+const fetchBefore = globalThis.fetch;
+globalThis.fetch = async (url, init = {}) => {
+  if (!String(url).startsWith('https://prymalab.net/')) mails.push(String(init.body || ''));
+  return fetchBefore(url, init);
+};
+const sub = (extra = {}) => mkOrder({ prymalab: { state: 'submitted', supplier_order_id: 'PL-9001', firstAt: new Date().toISOString(), ...extra } });
+const rbShip = sub();
+const rbCancel = sub();
+const rbNone = sub();
+const rbOld = sub({ firstAt: new Date(Date.now() - 31 * 86400000).toISOString() });
+const rbNoId = mkOrder({ prymalab: { state: 'submitted', firstAt: new Date().toISOString() } });
+const rbHasTrk = mkOrder({ tracking: '1ZHAVE', prymalab: { state: 'submitted', supplier_order_id: 'PL-9001', firstAt: new Date().toISOString() } });
+const answers = {};
+pl['/orders/PL-9001'] = () => Response.json({ order: { id: 'PL-9001', external_id: 'x', status: 'processing' } });
+// distinguish orders by their id: give each its own supplier id
+mem.get(rbShip).prymalab.supplier_order_id = 'PL-SHIP';
+mem.get(rbCancel).prymalab.supplier_order_id = 'PL-CAN';
+mem.get(rbOld).prymalab.supplier_order_id = 'PL-OLD';
+pl['/orders/PL-SHIP'] = () => Response.json({ order: { id: 'PL-SHIP', status: 'fulfilled', carrier: 'UPS', tracking_number: '1ZREADBACK1', shipped_at: '2026-11-20T10:00:00Z' } });
+pl['/orders/PL-CAN'] = () => Response.json({ order: { id: 'PL-CAN', status: 'cancelled' } });
+pl['/orders/PL-OLD'] = () => Response.json({ order: { id: 'PL-OLD', status: 'fulfilled', tracking_number: '1ZOLD' } });
+const gets = () => calls.filter((c) => /\/orders\/PL-/.test(c.url));
+const rt1 = await runRetry();
+ok('read-back sets tracking, shipped, carrier on the missed order', mem.get(rbShip).tracking === '1ZREADBACK1' && mem.get(rbShip).status === 'shipped' && mem.get(rbShip).prymalab.carrier === 'UPS' && mem.get(rbShip).shippedAt === '2026-11-20T10:00:00.000Z', JSON.stringify(rt1));
+ok('  the buyer is emailed once', mails.filter((m) => m.includes('lab@example.com')).length === 1 && rt1.shipped === 1, String(mails.length));
+const mailsAfter1 = mails.length;
+ok('cancelled on their side -> supplier_cancelled, not shipped', mem.get(rbCancel).prymalab.state === 'supplier_cancelled' && mem.get(rbCancel).status === 'paid' && !mem.get(rbCancel).tracking && rt1.cancelled === 1);
+ok('no tracking yet -> untouched', mem.get(rbNone).status === 'paid' && !mem.get(rbNone).tracking);
+ok('older than 30 days, no supplier id, or already tracked -> never read', !gets().some((c) => c.url.includes('PL-OLD')) && mem.get(rbNoId).status === 'paid' && mem.get(rbHasTrk).tracking === '1ZHAVE');
+ok('  reads use GET, no redirect follow, key only in the header', gets().every((c) => (c.init.method || 'GET') === 'GET' && c.init.redirect === 'manual' && !c.url.includes(KEY)));
+calls = [];
+const rt2 = await runRetry();
+ok('second run does nothing again: no second email, tracking unchanged', mails.filter((m) => m.includes('lab@example.com')).length === 1 && mem.get(rbShip).tracking === '1ZREADBACK1' && rt2.shipped === 0 && rt2.cancelled === 0, `${mails.length} vs ${mailsAfter1}`);
+off();
+calls = [];
+const rt3 = await runRetry();
+ok('sending off -> no PrymaLab read at all', rt3.off === true && calls.length === 0);
+on();
+// webhook after read-back: tracking is not overwritten and no second email
+const mBefore = mails.length;
+let rw = await deliverP({ partner_id: '162', data: { order: { id: 'PL-SHIP', external_id: rbShip, status: 'fulfilled', tracking_number: '1ZDIFFERENT', carrier: 'UPS' } } });
+ok('a late webhook after read-back changes no tracking and sends no second email', mem.get(rbShip).tracking === '1ZREADBACK1' && mails.length === mBefore);
+// cap: more than 25 submitted orders are not all read in one run
+for (const k of [...mem.keys()]) mem.delete(k);
+for (let i = 0; i < 30; i++) { const rf = sub(); mem.get(rf).prymalab.supplier_order_id = 'PL-SHIP'; }
+calls = [];
+await runRetry();
+ok('reads per run are capped at 25', gets().length === 25, String(gets().length));
+globalThis.fetch = fetchBefore;
+delete process.env.RESEND_API_KEY; delete process.env.EMAIL_FROM; delete process.env.ADMIN_EMAIL;
+
+/* =========================================================================== */
+say('\nADMIN: /api/admin/prymalab-status');
+for (const k of [...mem.keys()]) mem.delete(k);
+resetPl();
+pl['/me'] = () => Response.json({ partner_id: '162', store_url: 'https://pureauraa.com', webhook_url: 'https://pureauraa.com/api/webhooks/prymalab', email: 'secret@example.com' });
+pl['/balance'] = () => Response.json({ balance: '125.50', currency: 'usd' });
+process.env.ADMIN_PASSWORD = 'test-password';
+process.env.PRYMALAB_WEBHOOK_SECRET = WSECRET;
+sub(); sub(); mkOrder({ prymalab: { state: 'held_balance', firstAt: new Date().toISOString() } }); mkOrder();
+const st = (headers = {}, method = 'POST') => statusEp(new Request('https://x/api/admin/prymalab-status', { method, headers }));
+let rs = await st();
+ok('no password -> 401, nothing asked of PrymaLab', rs.status === 401 && calls.length === 0);
+rs = await st({ authorization: 'Bearer wrong' });
+ok('wrong password -> 401', rs.status === 401);
+rs = await st({ authorization: 'Bearer test-password' }, 'GET');
+ok('GET -> 405', rs.status === 405);
+rs = await st({ authorization: 'Bearer test-password' });
+const rawStatus = await rs.text();
+const js = JSON.parse(rawStatus);
+ok('status reports switch, key and secret as yes/no', rs.status === 200 && js.send_on === true && js.key_set === true && js.webhook_secret_set === true, rawStatus);
+ok('  partner id matches the store', js.partner_id === '162' && js.partner_id_matches === true);
+ok('  webhook URL on file matches', js.webhook_url === 'https://pureauraa.com/api/webhooks/prymalab' && js.webhook_url_matches === true);
+ok('  balance in cents and currency', js.balance_cents === 12550 && js.currency === 'USD');
+ok('  order counts by state', js.orders_by_state.submitted === 2 && js.orders_by_state.held_balance === 1, JSON.stringify(js.orders_by_state));
+ok('  never leaks the key, the secret, an email or a password', !rawStatus.includes(KEY) && !rawStatus.includes(WSECRET) && !rawStatus.includes('secret@example.com') && !rawStatus.includes('test-password'));
+pl['/me'] = () => Response.json({ partner_id: '999', webhook_url: 'https://old.example.com/hook' });
+rs = await st({ authorization: 'Bearer test-password' });
+const js2 = await rs.json();
+ok('a different partner id or webhook URL is flagged', js2.partner_id_matches === false && js2.webhook_url_matches === false);
+delete process.env.PRYMALAB_WEBHOOK_SECRET;
+off();
+rs = await st({ authorization: 'Bearer test-password' });
+const js3 = await rs.json();
+ok('no key -> key_set false, no PrymaLab call', js3.key_set === false && js3.send_on === false && js3.balance_cents === null);
+on();
 
 globalThis.fetch = realFetch;
 say(`\n${pass} passed, ${fail} failed`);

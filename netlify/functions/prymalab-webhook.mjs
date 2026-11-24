@@ -8,8 +8,7 @@
 // _prymalab-skus.json) and an order this store really sent and PrymaLab accepted. Tracking is
 // written once only and turns a paid order to shipped. Nothing from the body is logged.
 import { json, fail, orderStore } from './_lib.mjs';
-import { notifyBuyer, notifyOwnerAlert } from './_email.mjs';
-import { verifyPrymalabSignature, trackingOf, PARTNER_ID } from './_prymalab.mjs';
+import { verifyPrymalabSignature, applyPrymalabUpdate, PARTNER_ID } from './_prymalab.mjs';
 
 const ignored = (why) => json({ ok: true, ignored: why });
 const MAX_BODY = 262144;
@@ -57,56 +56,9 @@ export default async (req) => {
   if (!order || !pr || !LIVE.has(pr.state)) return ignored('not an order this store sent');
   if (pr.supplier_order_id && po.id != null && String(po.id) !== String(pr.supplier_order_id)) return ignored('another supplier order');
 
-  const t = trackingOf(po);
-  const now = new Date().toISOString();
-  let shipped = false;
-  let cancelled = false;
-  order.prymalab = { ...pr, supplier_status: t.status || event.slice(6) || pr.supplier_status, lastEventAt: now };
-  if (!pr.supplier_order_id && po.id != null) order.prymalab.supplier_order_id = String(po.id).slice(0, 80);
-
-  if (event === 'order.cancelled') {
-    cancelled = pr.state !== 'supplier_cancelled';
-    order.prymalab.state = 'supplier_cancelled';
-    order.prymalab.detail = 'PrymaLab cancelled this order on its side, so it will not ship from there. Check it in the PrymaLab dashboard.';
-  } else if (event === 'order.on_hold') {
-    order.prymalab.detail = 'PrymaLab put this order on hold on its side. Check it in the PrymaLab dashboard.';
-  } else {
-    // Any progress from PrymaLab means it is taking the order: an invoice-held order is now on its way.
-    if (pr.state !== 'submitted') {
-      order.prymalab.state = 'submitted';
-      order.prymalab.detail = 'PrymaLab is working on the order.';
-    }
-    if (t.tracking_number && !order.tracking && order.status === 'paid') {
-      order.tracking = t.tracking_number;
-      order.status = 'shipped';
-      order.shippedAt = t.shipped_at || now;
-      order.prymalab.carrier = t.carrier;
-      order.prymalab.detail = `Shipped by PrymaLab${t.carrier ? ` with ${t.carrier}` : ''}.`;
-      shipped = true;
-    }
-  }
-  order.updatedAt = now;
-
-  try {
-    await store.setJSON(ref, order);
-  } catch {
-    // Ours to fix: a 5xx makes PrymaLab deliver it again.
-    return fail('Could not record.', 500);
-  }
-
-  if (shipped) {
-    try {
-      const emailed = await notifyBuyer(order, 'shipped');
-      if (!emailed) console.warn(`[prymalab-webhook] ${ref} shipped; buyer not emailed`);
-    } catch {
-      console.warn(`[prymalab-webhook] ${ref} shipped; buyer email failed`);
-    }
-  }
-  if (cancelled) {
-    await notifyOwnerAlert(
-      `Order ${ref}: PrymaLab cancelled it`,
-      `PrymaLab reports order ${ref} as cancelled on its side, so it will not ship from PrymaLab.\n\nCheck it in the PrymaLab dashboard and in /admin/.`
-    ).catch(() => {});
-  }
+  const res = await applyPrymalabUpdate(store, ref, order, po, event);
+  // Ours to fix: a 5xx makes PrymaLab deliver it again.
+  if (!res.ok) return fail('Could not record.', 500);
+  const { shipped } = res;
   return json({ ok: true, ref, shipped });
 };
