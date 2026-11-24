@@ -17,6 +17,7 @@
 // payment details. The key is never logged, stored or returned.
 import { getStore, getDeployStore } from '@netlify/blobs';
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { notifyBuyer, notifyOwnerAlert } from './_email.mjs';
 import map from './_prymalab-skus.json' with { type: 'json' };
 
 export const BASE = 'https://prymalab.net/wp-json/prymalab/v1';
@@ -420,5 +421,100 @@ export function trackingOf(o) {
     carrier: short(x.carrier, 60),
     tracking_number: short(x.tracking_number, 80),
     shipped_at: shipped && Number.isFinite(Date.parse(shipped)) ? new Date(Date.parse(shipped)).toISOString() : null,
+  };
+}
+
+/**
+ * Applies what PrymaLab says about an order (a webhook event, or the hourly read-back of
+ * GET /orders/{id}) to a stored order: status, tracking, shipped, cancelled. ONE function for
+ * both, so they cannot drift. `order` must already be checked as one this store sent.
+ * Tracking is written once only; the buyer gets the shipped notice once, because it is sent only
+ * on the write that sets tracking. Returns { ok: false } if the write failed, else { ok, shipped, cancelled }.
+ */
+export async function applyPrymalabUpdate(store, ref, order, po, event) {
+  const pr = order.prymalab;
+  const t = trackingOf(po);
+  const now = new Date().toISOString();
+  let shipped = false;
+  let cancelled = false;
+  order.prymalab = { ...pr, supplier_status: t.status || event.slice(6) || pr.supplier_status, lastEventAt: now };
+  if (!pr.supplier_order_id && po.id != null) order.prymalab.supplier_order_id = String(po.id).slice(0, 80);
+
+  if (event === 'order.cancelled') {
+    cancelled = pr.state !== 'supplier_cancelled';
+    order.prymalab.state = 'supplier_cancelled';
+    order.prymalab.detail = 'PrymaLab cancelled this order on its side, so it will not ship from there. Check it in the PrymaLab dashboard.';
+  } else if (event === 'order.on_hold') {
+    order.prymalab.detail = 'PrymaLab put this order on hold on its side. Check it in the PrymaLab dashboard.';
+  } else {
+    // Any progress from PrymaLab means it is taking the order: an invoice-held order is now on its way.
+    if (pr.state !== 'submitted') {
+      order.prymalab.state = 'submitted';
+      order.prymalab.detail = 'PrymaLab is working on the order.';
+    }
+    if (t.tracking_number && !order.tracking && order.status === 'paid') {
+      order.tracking = t.tracking_number;
+      order.status = 'shipped';
+      order.shippedAt = t.shipped_at || now;
+      order.prymalab.carrier = t.carrier;
+      order.prymalab.detail = `Shipped by PrymaLab${t.carrier ? ` with ${t.carrier}` : ''}.`;
+      shipped = true;
+    }
+  }
+  order.updatedAt = now;
+
+  try {
+    await store.setJSON(ref, order);
+  } catch {
+    return { ok: false };
+  }
+
+  if (shipped) {
+    try {
+      const emailed = await notifyBuyer(order, 'shipped');
+      if (!emailed) console.warn(`[prymalab] ${ref} shipped; buyer not emailed`);
+    } catch {
+      console.warn(`[prymalab] ${ref} shipped; buyer email failed`);
+    }
+  }
+  if (cancelled) {
+    await notifyOwnerAlert(
+      `Order ${ref}: PrymaLab cancelled it`,
+      `PrymaLab reports order ${ref} as cancelled on its side, so it will not ship from PrymaLab.\n\nCheck it in the PrymaLab dashboard and in /admin/.`
+    ).catch(() => {});
+  }
+  return { ok: true, shipped, cancelled };
+}
+
+/* ---- read-back (backup for the webhook) ------------------------------------ */
+/** GET /orders/{id} with this store's key. Read only. Returns the order object, or null on any failure. */
+export async function readSupplierOrder(key, supplierOrderId, { timeoutMs = 8000, fetcher } = {}) {
+  if (!/^[A-Za-z0-9._-]{1,80}$/.test(String(supplierOrderId))) return null;
+  const r = await call(key, '/orders/' + encodeURIComponent(String(supplierOrderId)), { timeoutMs, fetcher });
+  if (r.error || r.status !== 200 || !r.data || typeof r.data !== 'object') return null;
+  const o = r.data.order && typeof r.data.order === 'object' ? r.data.order : r.data;
+  return o;
+}
+
+/** GET /balance with this store's key, in cents. { ok:false } on any failure; never a guessed number. */
+export async function readBalance(key, { timeoutMs = 8000, fetcher } = {}) {
+  const r = await call(key, '/balance', { timeoutMs, fetcher });
+  if (r.error || r.status !== 200 || !r.data || typeof r.data !== 'object') return { ok: false };
+  const d = r.data;
+  const node = d.balance ?? d.available ?? d.available_balance ?? d.credit ?? d.wallet ?? d;
+  const scalar = node && typeof node === 'object' && !Array.isArray(node) ? (node.amount ?? node.available ?? node.value ?? node.balance ?? node.total ?? node.due) : node;
+  const cur = short(d.currency ?? (node && typeof node === 'object' ? node.currency : null), 8) ?? 'USD';
+  return { ok: true, cents: cents(scalar), currency: cur.toUpperCase() };
+}
+
+/** GET /me, raw fields only (partner id, registered webhook URL). { ok:false } on failure. */
+export async function readMe(key, { timeoutMs = 8000, fetcher } = {}) {
+  const r = await call(key, '/me', { timeoutMs, fetcher });
+  if (r.error || r.status !== 200 || !r.data || typeof r.data !== 'object') return { ok: false };
+  const me = r.data;
+  return {
+    ok: true,
+    partner_id: short(me.partner_id ?? me.id, 64),
+    webhook_url: short(me.webhook_url ?? me.webhook?.url ?? me.webhooks?.order ?? me.webhook, 300),
   };
 }
